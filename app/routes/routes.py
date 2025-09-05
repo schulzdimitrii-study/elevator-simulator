@@ -1,7 +1,9 @@
 import threading
 import time
-from src.passenger import Passenger
-from src.elevator import elevator
+from app.passenger import Passenger
+from app.elevator import elevator
+from flask import jsonify
+from app import app
 
 lock = threading.Lock()
 
@@ -19,11 +21,12 @@ def run_elevator():
         
         elevator.move_up(boarding_passenger.name, boarding_passenger.destiny_floor)
         elevator.move_down()
-        
-def main():
-    t1 = threading.Thread(target = (run_elevator))
-    t2 = threading.Thread(target = (run_elevator))
-    t3 = threading.Thread(target = (run_elevator))
+
+@app.route('/start-simulation/')
+def start_simulation():
+    t1 = threading.Thread(target=run_elevator)
+    t2 = threading.Thread(target=run_elevator)
+    t3 = threading.Thread(target=run_elevator)
 
     start_time = time.time()
 
@@ -36,7 +39,6 @@ def main():
     t3.join()
 
     end_time = time.time()
-    print ('tempo: ', end_time - start_time)
-
-if __name__ == "__main__":
-    main()
+    execution_time = end_time - start_time
+    
+    return jsonify({"message": "Simulation completed", "time": execution_time})
