@@ -4,21 +4,21 @@ from flask_cors import CORS
 import threading
 import time
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 CORS(app)
 
 @app.route('/')
 def index():
-    return render_template('index.html', title="Simulador de Elevador")
+    return render_template('index.html')
 
-# Estado compartilhado do elevador
 def load_passengers():
     with open("passengers.json", "r", encoding="utf-8") as f:
         passengers = json.load(f)
-    # Adiciona campos necessários para o estado
+
     for p in passengers:
         p["current_floor"] = 0
         p["in_elevator"] = False
+        
     return passengers
 
 state = {
@@ -138,8 +138,6 @@ def start_auto():
 
 if __name__ == "__main__":
     app.run(
-        debug=True,
         host="0.0.0.0",
         port=8080,
     )
-    
