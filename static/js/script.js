@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let timer = 0;
     let timerInterval = null;
     let timerRunning = false;
-    let lastAnimatedFloor = 0;
-    // Elementos do DOM
     const buildingEl = document.getElementById('building');
     const elevatorEl = document.getElementById('elevator');
     const floorDisplayEl = document.getElementById('floor-display');
@@ -13,11 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const elevatorStatusEl = document.getElementById('elevator-status');
     const eventLogEl = document.getElementById('event-log');
     const peopleListEl = document.getElementById('people-list');
-    const addPeopleBtn = document.getElementById('add-people-btn');
-    const callElevatorBtn = document.getElementById('call-elevator-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const goToFloorBtn = document.getElementById('go-to-floor-btn');
-    const floorInputEl = document.getElementById('floor-input');
     const connectionStatusEl = document.getElementById('connection-status');
     // Configuração
     const totalFloors = 10;
@@ -162,55 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         eventLogEl.scrollTop = eventLogEl.scrollHeight;
     }
-    // Adicionar pessoas aleatórias
-    async function addRandomPeople() {
-        try {
-            const peopleData = [
-                { name: 'João', destiny_floor: 4 },
-                { name: 'Maria', destiny_floor: 6 },
-                { name: 'Ana', destiny_floor: 8 }
-            ];
-            const response = await fetch(`${API_BASE}/add_passenger`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ people: peopleData })
-            });
-            if (response.ok) {
-                connectionStatusEl.textContent = "Conectado";
-                connectionStatusEl.className = "connection-status connected";
-            } else {
-                throw new Error('Falha ao adicionar pessoas');
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-            connectionStatusEl.textContent = "Desconectado";
-            connectionStatusEl.className = "connection-status disconnected";
-        }
-    }
-    // Chamar elevador para um andar específico
-    async function callElevator(floor) {
-        try {
-            const response = await fetch(`${API_BASE}/call_elevator`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ floor: parseInt(floor) })
-            });
-            if (response.ok) {
-                connectionStatusEl.textContent = "Conectado";
-                connectionStatusEl.className = "connection-status connected";
-            } else {
-                throw new Error('Falha ao chamar elevador');
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-            connectionStatusEl.textContent = "Desconectado";
-            connectionStatusEl.className = "connection-status disconnected";
-        }
-    }
     // Reiniciar o sistema
     async function resetSystem() {
         try {
@@ -240,24 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 connectionStatusEl.className = "connection-status connected";
             } else {
                 throw new Error('Falha ao iniciar simulação automática');
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-            connectionStatusEl.textContent = "Desconectado";
-            connectionStatusEl.className = "connection-status disconnected";
-        }
-    }
-    // Parar simulação automática
-    async function stopAuto() {
-        try {
-            const response = await fetch(`${API_BASE}/stop_auto`, {
-                method: 'POST'
-            });
-            if (response.ok) {
-                connectionStatusEl.textContent = "Simulação automática parada";
-                connectionStatusEl.className = "connection-status connected";
-            } else {
-                throw new Error('Falha ao parar simulação automática');
             }
         } catch (error) {
             console.error('Erro:', error);
