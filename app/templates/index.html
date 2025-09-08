@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Elevador</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="building-container">
+            <div class="building" id="building">
+                <!-- Andares serão gerados via JavaScript -->
+            </div>
+        </div>
+        <div class="elevator-shaft">
+            <div class="elevator" id="elevator"></div>
+        </div>
+        <div class="display-panel">
+            <div class="status-row">
+                <div class="status-card">
+                    <h2>Andar Atual</h2>
+                    <div class="digital-display">
+                        <span id="floor-display">0</span>
+                    </div>
+                    <div class="direction" id="direction-display">■</div>
+                    <div id="elevator-status">Aguardando passageiros</div>
+                </div>
+                <div class="status-card">
+                    <h2>Cronômetro</h2>
+                    <div class="digital-display">
+                        <span id="timer-display">00:00</span>
+                    </div>
+                    <div id="timer-status">Tempo desde saída do 0</div>
+                </div>
+            </div>
+            <div class="status-card">
+                <h2>Painel de Controle</h2>
+                <div class="controls">
+                    <button class="control-btn" id="start-auto-btn">Iniciar Simulação</button>
+                    <button class="control-btn" id="reset-btn">Resetar Simulação</button>
+                </div>
+            </div>
+            <div class="status-card">
+                <h2>Pessoas no Sistema</h2>
+                <div class="people-list" id="people-list">
+                    <!-- Lista de pessoas será gerada aqui -->
+                </div>
+            </div>
+            <div class="status-card">
+                <h2>Log de Eventos</h2>
+                <div class="log" id="event-log">
+                    <div class="log-entry">Sistema inicializado. Aguardando início...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="connection-status" id="connection-status">Conectando...</div>
+    <script src="../static/js/script.js"></script>
+</body>
+</html>
