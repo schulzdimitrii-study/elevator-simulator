@@ -109,10 +109,20 @@ def get_state():
     resp_data = dict(state)
     resp_data["people"] = state["passengers"]
 
-    if state.get("auto_mode") and state["passengers"]:
+    # Corrige target_floor para refletir o destino do passageiro que está sendo transportado
+    target = None
+    for passenger in state["passengers"]:
+        if passenger.get("in_elevator"):
+            target = passenger.get("destiny_floor")
+            break
+    if target is not None:
+        resp_data["target_floor"] = target
+    elif state.get("auto_mode") and not any(p.get("in_elevator") for p in state["passengers"]):
+        # Se está voltando para o térreo sem passageiros
+        resp_data["target_floor"] = 0
+    elif state.get("auto_mode") and state["passengers"]:
         resp_data["target_floor"] = state["passengers"][0]["destiny_floor"]
     resp = jsonify(resp_data)
-    
     return resp
 
 @app.route('/api/reset', methods=['POST'])
