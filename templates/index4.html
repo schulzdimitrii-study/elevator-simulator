@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulação 4 Elevadores</title>
+    <link rel="stylesheet" href="/static/css/style4.css">
+</head>
+<body>
+    <h1>Simulação de 4 Elevadores</h1>
+    <div id="controls">
+        <button id="start-auto-btn">Iniciar Simulação</button>
+        <button id="reset-btn">Resetar</button>
+        <span id="timer-display">00:00</span>
+    </div>
+    <div id="building"></div>
+    <div id="elevators">
+        <div class="elevator-card">
+            <div id="elevatorA" class="elevator">A</div>
+            <div id="floor-display-A" class="floor-display"></div>
+            <div id="direction-display-A" class="direction-display"></div>
+            <div id="elevator-status-A" class="elevator-status"></div>
+        </div>
+        <div class="elevator-card">
+            <div id="elevatorB" class="elevator">B</div>
+            <div id="floor-display-B" class="floor-display"></div>
+            <div id="direction-display-B" class="direction-display"></div>
+            <div id="elevator-status-B" class="elevator-status"></div>
+        </div>
+        <div class="elevator-card">
+            <div id="elevatorC" class="elevator">C</div>
+            <div id="floor-display-C" class="floor-display"></div>
+            <div id="direction-display-C" class="direction-display"></div>
+            <div id="elevator-status-C" class="elevator-status"></div>
+        </div>
+        <div class="elevator-card">
+            <div id="elevatorD" class="elevator">D</div>
+            <div id="floor-display-D" class="floor-display"></div>
+            <div id="direction-display-D" class="direction-display"></div>
+            <div id="elevator-status-D" class="elevator-status"></div>
+        </div>
+    </div>
+    <div id="event-log"></div>
+    <div id="people-list"></div>
+    <script src="/static/js/script4.js"></script>
+</body>
+</html>
