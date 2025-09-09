@@ -16,10 +16,13 @@ class Elevator:
     def elevator_thread(self):
         while True:
             # Se não está no térreo, retorna
+            if self.current_floor > 0:
+                self.target_floor = 0
             while self.current_floor > 0:
                 self.move_down()
                 time.sleep(1)
             self.direction = "stopped"
+            self.target_floor = self.current_floor
 
             # Procurar passageiro esperando no térreo
             passenger = None
@@ -32,6 +35,7 @@ class Elevator:
                 passenger["in_elevator"] = True
                 passenger["current_floor"] = self.current_floor
                 target = passenger["destiny_floor"]
+                self.target_floor = target
                 pause = 1
 
                 # Leva o passageiro ao destino
@@ -48,11 +52,13 @@ class Elevator:
                 passenger["current_floor"] = target
                 passenger["is_arrived"] = True
                 self.current_floor = target
+                self.target_floor = self.current_floor
                 self.log_pool.append(f"Elevador {self.name} deixou {passenger['name']} no andar {target}")
                 self.direction = "stopped"
                 time.sleep(2)
             else:
                 # Se todos chegaram, encerra
+                self.target_floor = self.current_floor
                 if all(p["is_arrived"] for p in self.passengers_pool):
                     self.direction = "stopped"
                     self.log_pool.append(f"Elevador {self.name} finalizou.")
