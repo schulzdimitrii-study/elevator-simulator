@@ -1,6 +1,5 @@
 import json
 import time
-from app.passenger import Passenger
 
 class Elevator:
     def __init__(self):
@@ -61,7 +60,6 @@ class Elevator:
                 passenger["is_arrived"] = True
                 self.current_floor = target
                 self.target_floor = self.current_floor
-                self.log.append(f"Elevador deixou {passenger['name']} no andar {target}")
                 self.direction = "stopped"
                 time.sleep(2)
             else:

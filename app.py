@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, render_template
-from flask_cors import CORS
 import threading
 import webbrowser
+
+from flask import Flask, jsonify, render_template
+from flask_cors import CORS
 from app.elevator2 import Elevator, load_passengers
 from app.elevator1 import Elevator as Elevator1
 from app.elevator4 import Elevator as Elevator4, load_passengers as load_passengers4
@@ -48,7 +49,6 @@ def get_state_1():
 @app.route('/api1/reset', methods=['POST'])
 def reset_1():
     global elevator1_single
-    from app.elevator1 import Elevator as Elevator1
     elevator1_single = Elevator1()
     state = elevator1_single.get_state()
     state["people"] = state.get("passengers", [])
@@ -59,14 +59,14 @@ def start_1():
     threading.Thread(target=elevator1_single.elevator_thread, daemon=True).start()
     return jsonify({"message": "Simulation Started"})
 
-@app.route('/api2/state', methods=['GET'])
+@app.route('/api2/state', methods=['GET'])  # API para obter estado dos elevadores da simulação 2
 def get_state_2():
     global elevator1_2, elevator2_2, passengers_pool_2, log_pool_2
     if not elevator1_2 or not elevator2_2 or not passengers_pool_2 or not log_pool_2:
-        passengers_pool_2 = load_passengers()
-        log_pool_2 = []
-        elevator1_2 = Elevator("A", passengers_pool_2, log_pool_2)
-        elevator2_2 = Elevator("B", passengers_pool_2, log_pool_2)
+        passengers_pool_2 = load_passengers()  # Carrega passageiros
+        log_pool_2 = []  # Inicializa log
+        elevator1_2 = Elevator("A", passengers_pool_2, log_pool_2)  # Cria elevador A
+        elevator2_2 = Elevator("B", passengers_pool_2, log_pool_2)  # Cria elevador B
     resp_data = {
         "elevators": [
             elevator1_2.get_state(),
@@ -77,7 +77,7 @@ def get_state_2():
     }
     return jsonify(resp_data)
 
-@app.route('/api2/reset', methods=['POST'])
+@app.route('/api2/reset', methods=['POST'])  # API para resetar simulação 2
 def reset_2():
     global passengers_pool_2, log_pool_2, elevator1_2, elevator2_2
     passengers_pool_2 = load_passengers()
@@ -86,7 +86,7 @@ def reset_2():
     elevator2_2 = Elevator("B", passengers_pool_2, log_pool_2)
     return jsonify({"message": "Simulation Reset"})
 
-@app.route('/api2/start', methods=['POST'])
+@app.route('/api2/start', methods=['POST'])  # API para iniciar simulação 2
 def start_2():
     global elevator1_2, elevator2_2, log_pool_2
     if not elevator1_2 or not elevator2_2:
@@ -141,11 +141,6 @@ def start_4():
     threading.Thread(target=elevator4_4.elevator_thread, daemon=True).start()
     return jsonify({"message": "Simulation Started"})
 
-if __name__ == "__main__":
-    passengers_pool_2 = load_passengers()
-    log_pool_2 = []
-    elevator1_2 = Elevator("A", passengers_pool_2, log_pool_2)
-    elevator2_2 = Elevator("B", passengers_pool_2, log_pool_2)
-    elevator1_single.log.append("Sistema inicializado.")
-    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080")).start()
-    app.run(port=8080)
+if __name__ == "__main__":  # Executa se rodar o arquivo diretamente
+    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080")).start()  # Abre navegador após 1.5s
+    app.run(port=8080)  # Inicia servidor Flask na porta 8080
