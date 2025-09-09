@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const elevatorStatusEl = document.getElementById('elevator-status');
     const eventLogEl = document.getElementById('event-log');
     const peopleListEl = document.getElementById('people-list');
-    // Configuração
+    
     const totalFloors = 10;
     const API_BASE = 'http://localhost:8080/api1';
     let people = [];

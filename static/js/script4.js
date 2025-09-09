@@ -1,50 +1,37 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // ======= CONFIG =======
-  const totalFloors = 10;            // ajuste se quiser mais/menos andares
-  const FLOOR_HEIGHT_PX = 60;        // altura visual de cada andar
-  const API_BASE = 'http://localhost:8080/api4'; // usa endpoints /api4/* do backend:contentReference[oaicite:1]{index=1}
-
-  // ======= ESTADO LOCAL =======
   let timer = 0;
   let timerInterval = null;
   let timerRunning = false;
   let simulationStarted = false;
-
   const buildingEl = document.getElementById('building');
-
-  // 4 elevadores (DOM)
   const elevatorAEl = document.getElementById('elevatorA');
   const elevatorBEl = document.getElementById('elevatorB');
   const elevatorCEl = document.getElementById('elevatorC');
   const elevatorDEl = document.getElementById('elevatorD');
-
-  // Displays A..D (mantive o id "floor-display" tradicional para o A)
   const floorDisplayAEl = document.getElementById('floor-display');
   const directionDisplayAEl = document.getElementById('direction-display-A');
   const elevatorStatusAEl = document.getElementById('elevator-status-A');
-
   const floorDisplayBEl = document.getElementById('floor-display-B');
   const directionDisplayBEl = document.getElementById('direction-display-B');
   const elevatorStatusBEl = document.getElementById('elevator-status-B');
-
   const floorDisplayCEl = document.getElementById('floor-display-C');
   const directionDisplayCEl = document.getElementById('direction-display-C');
   const elevatorStatusCEl = document.getElementById('elevator-status-C');
-
   const floorDisplayDEl = document.getElementById('floor-display-D');
   const directionDisplayDEl = document.getElementById('direction-display-D');
   const elevatorStatusDEl = document.getElementById('elevator-status-D');
-
   const eventLogEl = document.getElementById('event-log');
 
-  // Pessoas / fallback de elevadores locais
+  const totalFloors = 10;
+  const FLOOR_HEIGHT_PX = 60;
+  const API_BASE = 'http://localhost:8080/api4';
+
   let people = [];
   let elevatorA = { current_floor: 0, target_floor: 0, moving: false, direction: 'stopped' };
   let elevatorB = { current_floor: 0, target_floor: 0, moving: false, direction: 'stopped' };
   let elevatorC = { current_floor: 0, target_floor: 0, moving: false, direction: 'stopped' };
   let elevatorD = { current_floor: 0, target_floor: 0, moving: false, direction: 'stopped' };
 
-  // ======= BUILDING =======
   function initializeBuilding() {
     buildingEl.innerHTML = '';
     for (let floor = totalFloors - 1; floor >= 0; floor--) {
@@ -66,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // ======= UI =======
   function animateCar(carEl, currentFloor) {
     const targetBottom = currentFloor * FLOOR_HEIGHT_PX;
     const currentBottom = parseInt(carEl.style.bottom || '0', 10) || 0;
@@ -104,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const peopleContainer = document.getElementById(`people-${floor}`);
       if (peopleContainer) peopleContainer.innerHTML = '';
     }
-    // desenha pessoas (mesma lógica básica do seu projeto)
+    // pessoas
     people.forEach(person => {
       let showFloor = null;
       if (!person.in_elevator && person.current_floor === 0) showFloor = 0;
@@ -134,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
     eventLogEl.scrollTop = eventLogEl.scrollHeight;
   }
 
-  // ======= BACKEND =======
   function updateView(data) {
     const arr = Array.isArray(data.elevators) ? data.elevators : [];
     elevatorA = arr[0] || elevatorA;
@@ -147,14 +132,12 @@ document.addEventListener('DOMContentLoaded', function () {
     paintElevatorUI(elevatorC, elevatorCEl, 'C', floorDisplayCEl, directionDisplayCEl, elevatorStatusCEl);
     paintElevatorUI(elevatorD, elevatorDEl, 'D', floorDisplayDEl, directionDisplayDEl, elevatorStatusDEl);
 
-    // Início do cronômetro quando aparecer a mensagem "Simulação iniciada"
     if (!simulationStarted && Array.isArray(data.log) && data.log.some(l => typeof l === 'string' && l.includes('Simulação iniciada'))) {
       simulationStarted = true;
       timerRunning = true;
       timerInterval = setInterval(() => { timer++; updateTimerDisplay(); }, 1000);
     }
-
-    // Para quando todos finalizarem (ajuste as strings se necessário)
+    
     if (simulationStarted && Array.isArray(data.log)) {
       const finishedMarks = ['Elevador A finalizou.', 'Elevador B finalizou.', 'Elevador C finalizou.', 'Elevador D finalizou.'];
       const allFinished = finishedMarks.every(mark => data.log.some(l => typeof l === 'string' && l.includes(mark)));
@@ -165,7 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     updateTimerDisplay();
 
-    // pessoas + log
     people = data.passengers || [];
     updateBuilding();
     updateLog(data.log || []);
@@ -175,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const response = await fetch(`${API_BASE}/reset`, { method: 'POST' }); // /api4/reset:contentReference[oaicite:2]{index=2}
       if (!response.ok) throw new Error('Falha ao reiniciar sistema');
-      // reseta cronômetro local
       timer = 0;
       timerRunning = false;
       clearInterval(timerInterval);
@@ -188,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function startAuto() {
     try {
-      const response = await fetch(`${API_BASE}/start`, { method: 'POST' }); // /api4/start:contentReference[oaicite:3]{index=3}
+      const response = await fetch(`${API_BASE}/start`, { method: 'POST' });
       if (!response.ok) throw new Error('Falha ao iniciar simulação automática');
     } catch (err) {
       console.error('Erro:', err);
@@ -209,11 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // ======= EVENTOS / BOOT =======
   document.getElementById('start-auto-btn').addEventListener('click', startAuto);
   document.getElementById('reset-btn').addEventListener('click', resetSystem);
 
   initializeBuilding();
-  setInterval(fetchState, 200); // pooling rápido para animação mais fluida
+  setInterval(fetchState, 200);
   fetchState();
 });

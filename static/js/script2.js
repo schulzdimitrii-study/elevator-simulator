@@ -1,6 +1,5 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Cronômetro
     let timer = 0;
     let timerInterval = null;
     let timerRunning = false;
@@ -11,18 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const floorDisplayAEl = document.getElementById('floor-display');
     const directionDisplayAEl = document.getElementById('direction-display-A');
     const elevatorStatusAEl = document.getElementById('elevator-status-A');
-    const timerDisplayAEl = document.getElementById('timer-display-A');
-    const timerStatusAEl = document.getElementById('timer-status-A');
     const floorDisplayBEl = document.getElementById('floor-display-B');
     const directionDisplayBEl = document.getElementById('direction-display-B');
     const elevatorStatusBEl = document.getElementById('elevator-status-B');
-    const timerDisplayBEl = document.getElementById('timer-display-B');
-    const timerStatusBEl = document.getElementById('timer-status-B');
     const eventLogEl = document.getElementById('event-log');
     const peopleListEl = document.getElementById('people-list');
-    // Configuração
+
     const totalFloors = 10;
     const API_BASE = 'http://localhost:8080/api2';
+
     let people = [];
     let elevatorA = {
         currentFloor: 0,
@@ -126,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateBuilding();
         updateLog(data.log);
     }
-    // Atualizar visualização do prédio
+
     function updateBuilding() {
         // Limpar todas as pessoas
         for (let floor = 0; floor < totalFloors; floor++) {

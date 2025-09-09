@@ -93,13 +93,13 @@ def load_passengers():
 
     def elevator_thread(self):
         while True:
-            # Se não está no térreo, retorna
+            # retorna se não estiver no 0
             while self.current_floor > 0:
                 self.move_down()
                 time.sleep(1)
             self.direction = "stopped"
 
-            # Procurar passageiro esperando no térreo
+            # verifica passageiro esperando no 0
             passenger = None
             for p in self.passengers_pool:
                 if not p["in_elevator"] and not p["is_arrived"] and p["current_floor"] == 0:
@@ -112,7 +112,7 @@ def load_passengers():
                 target = passenger["destiny_floor"]
                 pause = 1
 
-                # Leva o passageiro ao destino
+                # leva o passageiro
                 while self.current_floor != target:
                     if self.current_floor < target:
                         self.move_up()
