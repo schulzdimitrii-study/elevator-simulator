@@ -45,13 +45,11 @@ class Elevator:
                     target = passenger["destiny_floor"]
                     
                     if self.current_floor < target:
-                        self.current_floor += 1
-                        self.direction = "up"
+                        self.move_up()
                         pause = 1
                         
                     elif self.current_floor > target:
-                        self.current_floor -= 1
-                        self.direction = "down"
+                        self.move_down()
                         pause = 1
                         
                     else:
@@ -65,14 +63,11 @@ class Elevator:
                     pause = 1
             elif not any(p["in_elevator"] for p in self.passengers):
                 if self.current_floor > 0:
-                    self.current_floor -= 1
-                    self.direction = "down"
-                    # self.passengers = 1
+                    self.move_down()
                     returning_to_zero = True
                     
                 elif self.current_floor < 0:
-                    self.current_floor += 1
-                    self.direction = "up"
+                    self.move_up()
                     pause = 1
                     returning_to_zero = True
                     
@@ -98,5 +93,14 @@ class Elevator:
             "passengers": self.passengers,
             "log": self.log
         }
+        
+    def move_down(self):
+        self.current_floor -= 1
+        self.direction = "down"
+        
+    def move_up(self):
+        self.current_floor += 1
+        self.direction = "up"
+        
         
 elevator = Elevator()
