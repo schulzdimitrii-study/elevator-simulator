@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Iniciar simulação automática
     async function startAuto() {
         try {
-            const response = await fetch(`${API_BASE}/start_auto`, {
+            const response = await fetch(`${API_BASE}/start`, {
                 method: 'POST'
             });
             if (response.ok) {

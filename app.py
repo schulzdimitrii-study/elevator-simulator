@@ -41,19 +41,15 @@ def reset():
     elevator.passengers = elevator.load_passengers()
     elevator.log = []
 
-    return jsonify({"status": "success"})
+    return jsonify({"message": "Simulation Reset"})
 
-@app.route('/api/start_auto', methods=['POST'])
-def start_auto():
+@app.route('/api/start', methods=['POST'])
+def start():
     elevator.log.append("Simulação iniciada")
     threading.Thread(target=elevator.elevator_thread, daemon=True).start()
     
-    return jsonify({"status": "auto_started"})
+    return jsonify({"message": "Simulation Started"})
 
 if __name__ == "__main__":
-    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080")).start()
-    app.run(
-        debug=0,
-        host="0.0.0.0",
-        port=8080,
-    )
+    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080"))
+    app.run(port=8080)
