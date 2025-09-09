@@ -1,5 +1,6 @@
 import json
 import time
+from app.passenger import Passenger
 
 class Elevator:
     def __init__(self):
@@ -17,72 +18,42 @@ class Elevator:
 
         for p in passengers:
             p["in_elevator"] = False
-            
+            p["current_floor"] = 0
         return passengers
 
     def elevator_thread(self):
-        global first_run
-        first_run = True
-        returning_to_zero = False
-        while True:
-            if first_run and self.passengers:
-                first_run = False
+        for passenger in self.passengers:
+            while self.current_floor > 0:
+                self.move_down()
                 time.sleep(1)
+            self.direction = "stopped"
 
-                for passenger in self.passengers:
-                    passenger["in_elevator"] = True
-                continue
-            
-            if any(p["in_elevator"] for p in self.passengers):
-                next_idx = None
-                for idx, passenger in enumerate(self.passengers):
-                    if passenger["in_elevator"]:
-                        next_idx = idx
-                        break
-                    
-                if next_idx is not None:
-                    passenger = self.passengers[next_idx]
-                    target = passenger["destiny_floor"]
-                    
-                    if self.current_floor < target:
-                        self.move_up()
-                        pause = 1
-                        
-                    elif self.current_floor > target:
-                        self.move_down()
-                        pause = 1
-                        
-                    else:
-                        time.sleep(1)
-                        passenger["in_elevator"] = False
-                        self.current_floor = target
-                        self.log.append(f"Elevador levou {passenger['name']} ao andar {target}")
-                        self.direction = "stopped"
-                        pause = 2
-                else:
-                    pause = 1
-            elif not any(p["in_elevator"] for p in self.passengers):
-                if self.current_floor > 0:
-                    self.move_down()
-                    returning_to_zero = True
-                    
-                elif self.current_floor < 0:
+            passenger["in_elevator"] = True
+            passenger["current_floor"] = self.current_floor
+            target = passenger["destiny_floor"]
+            pause = 1
+
+            while self.current_floor != target:
+                if self.current_floor < target:
                     self.move_up()
-                    pause = 1
-                    returning_to_zero = True
-                    
-                elif self.current_floor == 0 and returning_to_zero:
-                    self.direction = "stopped"
-                    self.passengers["log"].append("Simulação finalizada. Elevador voltou ao térreo.")
-                    returning_to_zero = False
-                    pause = 1
-                else:
-                    pause = 1
-                    
-            else:
-                self.direction = "stopped"
-                pause = 1
-            time.sleep(pause)
+                elif self.current_floor > target:
+                    self.move_down()
+                passenger["current_floor"] = self.current_floor
+                time.sleep(pause)
+
+            time.sleep(1)
+            passenger["in_elevator"] = False
+            passenger["current_floor"] = target
+            self.current_floor = target
+            self.log.append(f"Elevador deixou {passenger['name']} no andar {target}")
+            self.direction = "stopped"
+            time.sleep(2)
+
+        while self.current_floor > 0:
+            self.move_down()
+            time.sleep(1)
+        self.direction = "stopped"
+        self.log.append("Simulação finalizada.")
             
     def get_state(self):
         return {
@@ -97,10 +68,9 @@ class Elevator:
     def move_down(self):
         self.current_floor -= 1
         self.direction = "down"
-        
+
     def move_up(self):
         self.current_floor += 1
         self.direction = "up"
-        
         
 elevator = Elevator()
