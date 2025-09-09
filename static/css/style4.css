@@ -83,18 +83,21 @@ h1 {
     box-shadow: 0 0 5px rgba(45,146,253,1.000);
 }
 .elevator-shaft {
-    width: 120px;
+    width: 40px !important;
+    min-width: 40px;
+    max-width: 40px;
     height: 600px;
     background-color: rgba(0, 0, 0, 0.3);
     border: 3px solid #333;
     border-radius: 5px;
     position: relative;
     overflow: hidden;
-    margin-right: 50px;
+    margin-right: 0px;
+    flex: 0 0 120px;
 }
 .elevator {
-    width: 120px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     background: linear-gradient(135deg, #3498db, #2c3e50);
     position: absolute;
     bottom: 0;
@@ -115,6 +118,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    margin-left: 60px;
 }
 .status-row {
     display: flex;
