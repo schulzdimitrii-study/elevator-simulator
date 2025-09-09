@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import threading
 import webbrowser
-from app.elevator import Elevator, load_passengers
+from app.elevator2 import Elevator, load_passengers
 from app.elevator1 import Elevator as Elevator1
 
 app = Flask(__name__, template_folder='templates')
@@ -31,7 +31,7 @@ def simulacao1():
 # Simulação 2 elevadores
 @app.route('/simulacao2')
 def simulacao2():
-    return render_template('index.html')
+    return render_template('index2.html')
 
 
 # API para simulação 2 elevadores
@@ -86,14 +86,10 @@ def get_state_1():
 
 @app.route('/api1/reset', methods=['POST'])
 def reset_1():
-    # Apenas limpa e reinicializa os dados, nunca recria o objeto
-    elevator1_single.current_floor = 0
-    elevator1_single.target_floor = 0
-    elevator1_single.moving = False
-    elevator1_single.direction = "stopped"
-    elevator1_single.passengers = elevator1_single.load_passengers()
-    elevator1_single.log = []
-    # Não inicia a thread aqui!
+    # Cria uma nova instância do elevador para garantir que nenhuma thread antiga continue rodando
+    global elevator1_single
+    from app.elevator1 import Elevator as Elevator1
+    elevator1_single = Elevator1()
     state = elevator1_single.get_state()
     state["people"] = state.get("passengers", [])
     return jsonify(state)
