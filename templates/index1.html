@@ -13,29 +13,18 @@
                 <!-- Andares serão gerados via JavaScript -->
             </div>
         </div>
-        <div class="elevator-shaft" style="width: 120px;">
-            <div class="elevator" id="elevatorA"></div>
-        </div>
-        <div class="elevator-shaft" style="width: 120px;">
-            <div class="elevator" id="elevatorB"></div>
+        <div class="elevator-shaft">
+            <div class="elevator" id="elevator"></div>
         </div>
         <div class="display-panel">
             <div class="status-row">
                 <div class="status-card">
-                    <h2>Eleva A</h2>
+                    <h2>Andar Atual</h2>
                     <div class="digital-display">
                         <span id="floor-display">0</span>
                     </div>
-                    <div class="direction" id="direction-display-A">■</div>
-                    <div id="elevator-status-A">Aguardando passageiros</div>
-                </div>
-                <div class="status-card">
-                    <h2>Eleva B</h2>
-                    <div class="digital-display">
-                        <span id="floor-display-B">0</span>
-                    </div>
-                    <div class="direction" id="direction-display-B">■</div>
-                    <div id="elevator-status-B">Aguardando passageiros</div>
+                    <div class="direction" id="direction-display">■</div>
+                    <div id="elevator-status">Aguardando passageiros</div>
                 </div>
                 <div class="status-card">
                     <h2>Cronômetro</h2>
@@ -55,11 +44,10 @@
             <div class="status-card">
                 <h2>Log de Eventos</h2>
                 <div class="log" id="event-log">
-                    <div class="log-entry">Sistema inicializado. Aguardando início...</div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/script1.js')}}"></script>
 </body>
 </html>

@@ -4,33 +4,18 @@ document.addEventListener('DOMContentLoaded', function() {
     let timer = 0;
     let timerInterval = null;
     let timerRunning = false;
-    let simulationStarted = false;
     const buildingEl = document.getElementById('building');
-    const elevatorAEl = document.getElementById('elevatorA');
-    const elevatorBEl = document.getElementById('elevatorB');
-    const floorDisplayAEl = document.getElementById('floor-display');
-    const directionDisplayAEl = document.getElementById('direction-display-A');
-    const elevatorStatusAEl = document.getElementById('elevator-status-A');
-    const timerDisplayAEl = document.getElementById('timer-display-A');
-    const timerStatusAEl = document.getElementById('timer-status-A');
-    const floorDisplayBEl = document.getElementById('floor-display-B');
-    const directionDisplayBEl = document.getElementById('direction-display-B');
-    const elevatorStatusBEl = document.getElementById('elevator-status-B');
-    const timerDisplayBEl = document.getElementById('timer-display-B');
-    const timerStatusBEl = document.getElementById('timer-status-B');
+    const elevatorEl = document.getElementById('elevator');
+    const floorDisplayEl = document.getElementById('floor-display');
+    const directionDisplayEl = document.getElementById('direction-display');
+    const elevatorStatusEl = document.getElementById('elevator-status');
     const eventLogEl = document.getElementById('event-log');
     const peopleListEl = document.getElementById('people-list');
     // Configuração
     const totalFloors = 10;
-    const API_BASE = 'http://localhost:8080/api2';
+    const API_BASE = 'http://localhost:8080/api1';
     let people = [];
-    let elevatorA = {
-        currentFloor: 0,
-        targetFloor: 0,
-        moving: false,
-        direction: 'stopped'
-    };
-    let elevatorB = {
+    let elevator = {
         currentFloor: 0,
         targetFloor: 0,
         moving: false,
@@ -57,74 +42,62 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Atualizar a visualização com base nos dados do backend
     function updateView(data) {
-        // Atualizar estado dos elevadores
-        const elevA = data.elevators[0];
-        const elevB = data.elevators[1];
-        elevatorA = elevA;
-        elevatorB = elevB;
-        // Animar elevador A
-        const targetBottomA = elevatorA.current_floor * 60;
-        if (Math.abs((parseInt(elevatorAEl.style.bottom) || 0) - targetBottomA) > 1) {
-            elevatorAEl.style.transition = `bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1)`;
-            elevatorAEl.style.bottom = `${targetBottomA}px`;
+        // Cronômetro: inicia quando sai do 0, para quando volta ao 0
+        if (data.current_floor !== 0 && !timerRunning) {
+            timerRunning = true;
+            timerInterval = setInterval(() => {
+                timer++;
+                updateTimerDisplay();
+            }, 1000);
         }
-        elevatorAEl.textContent = "A";
-        floorDisplayAEl.textContent = elevatorA.current_floor;
-        if (elevatorA.direction === 'up') {
-            directionDisplayAEl.textContent = '▲';
-            elevatorStatusAEl.textContent = `Subindo para o andar ${elevatorA.target_floor}`;
-        } else if (elevatorA.direction === 'down') {
-            directionDisplayAEl.textContent = '▼';
-            elevatorStatusAEl.textContent = `Descendo para o andar ${elevatorA.target_floor}`;
-        } else {
-            directionDisplayAEl.textContent = '■';
-            elevatorStatusAEl.textContent = `Parado no andar ${elevatorA.current_floor}`;
-        }
-        // Animar elevador B
-        const targetBottomB = elevatorB.current_floor * 60;
-        if (Math.abs((parseInt(elevatorBEl.style.bottom) || 0) - targetBottomB) > 1) {
-            elevatorBEl.style.transition = `bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1)`;
-            elevatorBEl.style.bottom = `${targetBottomB}px`;
-        }
-        elevatorBEl.textContent = "B";
-        floorDisplayBEl.textContent = elevatorB.current_floor;
-        if (elevatorB.direction === 'up') {
-            directionDisplayBEl.textContent = '▲';
-            elevatorStatusBEl.textContent = `Subindo para o andar ${elevatorB.target_floor}`;
-        } else if (elevatorB.direction === 'down') {
-            directionDisplayBEl.textContent = '▼';
-            elevatorStatusBEl.textContent = `Descendo para o andar ${elevatorB.target_floor}`;
-        } else {
-            directionDisplayBEl.textContent = '■';
-            elevatorStatusBEl.textContent = `Parado no andar ${elevatorB.current_floor}`;
-        }
-
-        // Cronômetro global: inicia quando a simulação começa, para quando ambos elevadores finalizarem
-    if (!simulationStarted && Array.isArray(data.log) && data.log.length > 0 && typeof data.log[0] === 'string' && data.log[0].includes("Simulação iniciada")) {
-        simulationStarted = true;
-        timerRunning = true;
-        timerInterval = setInterval(() => {
-            timer++;
-            updateTimerDisplay();
-        }, 1000);
-    }
-    // Verifica se ambos elevadores finalizaram
-    if (simulationStarted && data.log && data.log.some(l => l.includes("Elevador A finalizou.")) && data.log.some(l => l.includes("Elevador B finalizou."))) {
-        if (timerRunning) {
+        if (data.current_floor === 0 && timerRunning) {
             timerRunning = false;
             clearInterval(timerInterval);
         }
-    }
-    updateTimerDisplay();
-    function updateTimerDisplay() {
-        const min = String(Math.floor(timer / 60)).padStart(2, '0');
-        const sec = String(timer % 60).padStart(2, '0');
-        document.getElementById('timer-display').textContent = `${min}:${sec}`;
-    }
+        updateTimerDisplay();
+        function updateTimerDisplay() {
+            const timerDisplayEl = document.getElementById('timer-display');
+            const min = String(Math.floor(timer / 60)).padStart(2, '0');
+            const sec = String(timer % 60).padStart(2, '0');
+            timerDisplayEl.textContent = `${min}:${sec}`;
+        }
+        // Atualizar estado do elevador
+        elevator = {
+            currentFloor: data.current_floor,
+            targetFloor: data.target_floor,
+            moving: data.moving,
+            direction: data.direction
+        };
         // Atualizar pessoas
-        people = data.passengers;
+        people = data.people;
+        // Quadrado do elevador anima suavemente entre andares
+        const currentFloor = elevator.currentFloor;
+        const targetBottom = currentFloor * 60;
+        if (Math.abs((parseInt(elevatorEl.style.bottom) || 0) - targetBottom) > 1) {
+            elevatorEl.style.transition = `bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1)`;
+            elevatorEl.style.bottom = `${targetBottom}px`;
+            lastAnimatedFloor = currentFloor;
+        }
+        elevatorEl.textContent = "";
+        // Painel mostra sempre o andar atual do backend
+        floorDisplayEl.textContent = elevator.currentFloor;
+        // Atualizar direção
+        if (elevator.direction === 'up') {
+            directionDisplayEl.textContent = '▲';
+            elevatorStatusEl.textContent = `Subindo para o andar ${elevator.targetFloor}`;
+        } else if (elevator.direction === 'down') {
+            directionDisplayEl.textContent = '▼';
+            elevatorStatusEl.textContent = `Descendo para o andar ${elevator.targetFloor}`;
+        } else {
+            directionDisplayEl.textContent = '■';
+            elevatorStatusEl.textContent = `Parado no andar ${elevator.currentFloor}`;
+        }
+        // Atualizar visualização das pessoas
         updateBuilding();
-        updateLog(data.log);
+        // Atualizar lista de pessoas
+        updatePeopleList();
+        // Atualizar log
+    updateLog(Array.isArray(data.log) ? data.log : []);
     }
     // Atualizar visualização do prédio
     function updateBuilding() {

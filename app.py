@@ -2,54 +2,116 @@ from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import threading
 import webbrowser
-from app.elevator import elevator
+from app.elevator import Elevator, load_passengers
+from app.elevator1 import Elevator as Elevator1
 
 app = Flask(__name__, template_folder='templates')
 CORS(app)
 
+# Pools para simulação 2 elevadores
+passengers_pool_2 = None
+log_pool_2 = None
+elevator1_2 = None
+elevator2_2 = None
+
+from app.elevator1 import Elevator as Elevator1
+elevator1_single = Elevator1()
+
+
+# Página inicial para escolha da simulação
 @app.route('/')
-def index():
+def home():
+    return render_template('home.html')
+
+# Simulação 1 elevador
+@app.route('/simulacao1')
+def simulacao1():
+    return render_template('index1.html')
+
+# Simulação 2 elevadores
+@app.route('/simulacao2')
+def simulacao2():
     return render_template('index.html')
 
-@app.route('/api/state', methods=['GET'])
-def get_state():
-    resp_data = elevator.get_state()
-    resp_data["people"] = elevator.passengers
 
-    target = None
-    for passenger in elevator.passengers:
-        if passenger.get("in_elevator"):
-            target = passenger.get("destiny_floor")
-            break
-        
-    if target is not None:
-        resp_data["target_floor"] = target
-    elif not any(p.get("in_elevator") for p in elevator.passengers):
-        resp_data["target_floor"] = 0
-    elif elevator.passengers:
-        resp_data["target_floor"] = elevator.passengers[0]["destiny_floor"]
-    resp = jsonify(resp_data)
-    
-    return resp
+# API para simulação 2 elevadores
+@app.route('/api2/state', methods=['GET'])
+def get_state_2():
+    global elevator1_2, elevator2_2, passengers_pool_2, log_pool_2
+    # Inicializa pools se necessário
+    if not elevator1_2 or not elevator2_2 or not passengers_pool_2 or not log_pool_2:
+        passengers_pool_2 = load_passengers()
+        log_pool_2 = []
+        elevator1_2 = Elevator("A", passengers_pool_2, log_pool_2)
+        elevator2_2 = Elevator("B", passengers_pool_2, log_pool_2)
+    resp_data = {
+        "elevators": [
+            elevator1_2.get_state(),
+            elevator2_2.get_state()
+        ],
+        "passengers": passengers_pool_2,
+        "log": log_pool_2
+    }
+    return jsonify(resp_data)
 
-@app.route('/api/reset', methods=['POST'])
-def reset():
-    elevator.current_floor = 0
-    elevator.target_floor = 0
-    elevator.moving = False
-    elevator.direction = "stopped"
-    elevator.passengers = elevator.load_passengers()
-    elevator.log = []
 
+@app.route('/api2/reset', methods=['POST'])
+def reset_2():
+    global passengers_pool_2, log_pool_2, elevator1_2, elevator2_2
+    passengers_pool_2 = load_passengers()
+    log_pool_2 = []
+    elevator1_2 = Elevator("A", passengers_pool_2, log_pool_2)
+    elevator2_2 = Elevator("B", passengers_pool_2, log_pool_2)
     return jsonify({"message": "Simulation Reset"})
 
-@app.route('/api/start', methods=['POST'])
-def start():
-    elevator.log.append("Simulação iniciada")
-    threading.Thread(target=elevator.elevator_thread, daemon=True).start()
-    
+
+@app.route('/api2/start', methods=['POST'])
+def start_2():
+    global elevator1_2, elevator2_2, log_pool_2
+    if not elevator1_2 or not elevator2_2:
+        return jsonify({"error": "Elevadores não inicializados"}), 400
+    log_pool_2.append("Simulação iniciada")
+    threading.Thread(target=elevator1_2.elevator_thread, daemon=True).start()
+    threading.Thread(target=elevator2_2.elevator_thread, daemon=True).start()
+    return jsonify({"message": "Simulation Started"})
+
+
+# API para simulação 1 elevador
+@app.route('/api1/state', methods=['GET'])
+def get_state_1():
+    # Nunca recria o objeto, apenas retorna o estado
+    state = elevator1_single.get_state()
+    state["people"] = state.get("passengers", [])
+    return jsonify(state)
+
+@app.route('/api1/reset', methods=['POST'])
+def reset_1():
+    # Apenas limpa e reinicializa os dados, nunca recria o objeto
+    elevator1_single.current_floor = 0
+    elevator1_single.target_floor = 0
+    elevator1_single.moving = False
+    elevator1_single.direction = "stopped"
+    elevator1_single.passengers = elevator1_single.load_passengers()
+    elevator1_single.log = []
+    # Não inicia a thread aqui!
+    state = elevator1_single.get_state()
+    state["people"] = state.get("passengers", [])
+    return jsonify(state)
+
+@app.route('/api1/start', methods=['POST'])
+def start_1():
+    # Apenas inicia a thread e atualiza o log
+    elevator1_single.log.append("Simulação iniciada")
+    threading.Thread(target=elevator1_single.elevator_thread, daemon=True).start()
     return jsonify({"message": "Simulation Started"})
 
 if __name__ == "__main__":
-    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080"))
+    # Inicializa pools para 2 elevadores
+    passengers_pool_2 = load_passengers()
+    log_pool_2 = []
+    elevator1_2 = Elevator("A", passengers_pool_2, log_pool_2)
+    elevator2_2 = Elevator("B", passengers_pool_2, log_pool_2)
+    # Instância global do elevador de 1
+    elevator1_single.log.append("Sistema inicializado. Aguardando início...")
+    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080")).start()
     app.run(port=8080)

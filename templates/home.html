@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha a Simulação</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container" style="flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+        <h1>Simulador de Elevador</h1>
+        <h2>Escolha a simulação:</h2>
+        <div style="display: flex; gap: 40px; margin-top: 40px;">
+            <a href="/simulacao1"><button class="control-btn" style="font-size: 1.5rem;">1 Elevador</button></a>
+            <a href="/simulacao2"><button class="control-btn" style="font-size: 1.5rem;">2 Elevadores</button></a>
+        </div>
+    </div>
+</body>
+</html>
