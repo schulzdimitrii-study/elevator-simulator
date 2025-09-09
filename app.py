@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import threading
+import webbrowser
 from app.elevator import elevator
 
 app = Flask(__name__, template_folder='templates')
@@ -44,14 +45,15 @@ def reset():
 
 @app.route('/api/start_auto', methods=['POST'])
 def start_auto():
-    elevator.log.append("Simulação automática iniciada")
+    elevator.log.append("Simulação iniciada")
     threading.Thread(target=elevator.elevator_thread, daemon=True).start()
     
     return jsonify({"status": "auto_started"})
 
 if __name__ == "__main__":
+    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080")).start()
     app.run(
-        debug=True,
+        debug=0,
         host="0.0.0.0",
         port=8080,
     )
