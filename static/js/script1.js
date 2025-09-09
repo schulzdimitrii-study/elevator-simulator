@@ -200,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Event Listeners
     document.getElementById('start-auto-btn').addEventListener('click', startAuto);
-    document.getElementById('reset-btn').addEventListener('click', resetSystem);
     // Adiciona pessoas automaticamente ao iniciar a simulação
 
     // Após reset, sempre adiciona passageiros e inicia simulação automaticamente
