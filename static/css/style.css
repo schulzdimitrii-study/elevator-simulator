@@ -5,7 +5,7 @@
 }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #232526, #414345 80%, #fdbb2d 100%);
+    background: linear-gradient(135deg, #232526, #414345 80%, #2d92fd 100%);
     color: white;
     min-height: 100vh;
     padding: 20px;
@@ -72,7 +72,7 @@ h1 {
 .person {
     width: 25px;
     height: 25px;
-    background-color: #ff5252;
+    background-color: #2d92fd;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -80,7 +80,7 @@ h1 {
     color: white;
     font-weight: bold;
     font-size: 0.8rem;
-    box-shadow: 0 0 5px rgba(255, 82, 82, 0.8);
+    box-shadow: 0 0 5px rgba(45,146,253,1.000);
 }
 .elevator-shaft {
     width: 80px;
@@ -134,21 +134,21 @@ h1 {
 .status-card h2 {
     margin-bottom: 15px;
     color: #3498db;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid #2d92fd;
     padding-bottom: 5px;
 }
 .digital-display {
     background: #111;
-    color: #ff5252;
+    color: #2d92fd;
     font-family: 'Courier New', monospace;
     font-size: 3rem;
     font-weight: bold;
     padding: 20px;
     text-align: center;
     border-radius: 10px;
-    box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.3);
+    box-shadow: inset 0 0 20px rgba(45,146,253,1.000);
     margin: 20px 0;
-    text-shadow: 0 0 10px #ff5252;
+    text-shadow: 0 0 10px #2d92fd;
 }
 .log {
     height: 200px;
@@ -182,12 +182,6 @@ h1 {
 }
 .control-btn:hover {
     background: #2980b9;
-}
-.people-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    margin-top: 15px;
 }
 .person-card {
     background: rgba(255, 255, 255, 0.1);

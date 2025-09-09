@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const elevatorStatusEl = document.getElementById('elevator-status');
     const eventLogEl = document.getElementById('event-log');
     const peopleListEl = document.getElementById('people-list');
-    const connectionStatusEl = document.getElementById('connection-status');
     // Configuração
     const totalFloors = 10;
     const API_BASE = 'http://localhost:8080/api';
@@ -162,15 +161,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST'
             });
             if (response.ok) {
-                connectionStatusEl.textContent = "Conectado";
-                connectionStatusEl.className = "connection-status connected";
             } else {
                 throw new Error('Falha ao reiniciar sistema');
             }
         } catch (error) {
             console.error('Erro:', error);
-            connectionStatusEl.textContent = "Desconectado";
-            connectionStatusEl.className = "connection-status disconnected";
         }
     }
     // Iniciar simulação automática
@@ -180,15 +175,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST'
             });
             if (response.ok) {
-                connectionStatusEl.textContent = "Simulação automática iniciada";
-                connectionStatusEl.className = "connection-status connected";
             } else {
                 throw new Error('Falha ao iniciar simulação automática');
             }
         } catch (error) {
             console.error('Erro:', error);
-            connectionStatusEl.textContent = "Desconectado";
-            connectionStatusEl.className = "connection-status disconnected";
         }
     }
     // Buscar estado atual do backend
@@ -200,15 +191,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 updateView(data);
-                connectionStatusEl.textContent = "Conectado";
-                connectionStatusEl.className = "connection-status connected";
             } else {
                 throw new Error('Falha ao buscar estado');
             }
         } catch (error) {
             console.error('Erro:', error);
-            connectionStatusEl.textContent = "Desconectado";
-            connectionStatusEl.className = "connection-status disconnected";
         }
     }
     // Event Listeners
