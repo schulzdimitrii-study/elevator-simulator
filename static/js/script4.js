@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const floorDisplayDEl = document.getElementById('floor-display-D');
   const directionDisplayDEl = document.getElementById('direction-display-D');
   const elevatorStatusDEl = document.getElementById('elevator-status-D');
-  const eventLogEl = document.getElementById('event-log');
+  const eventLog = document.getElementById('event-log');
 
   const totalFloors = 10;
   const FLOOR_HEIGHT_PX = 60;
@@ -110,14 +110,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function updateLog(logEntries) {
     const recentEntries = (logEntries || []).slice(-50);
-    eventLogEl.innerHTML = '';
+    eventLog.innerHTML = '';
     recentEntries.forEach(entry => {
       const logEntry = document.createElement('div');
       logEntry.className = 'log-entry';
       logEntry.textContent = entry;
-      eventLogEl.appendChild(logEntry);
+      eventLog.appendChild(logEntry);
     });
-    eventLogEl.scrollTop = eventLogEl.scrollHeight;
+    eventLog.scrollTop = eventLog.scrollHeight;
   }
 
   function updateView(data) {
