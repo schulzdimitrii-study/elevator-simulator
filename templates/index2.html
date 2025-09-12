@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Elevador</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
 </head>
 <body>
     <div class="container">
@@ -13,25 +13,36 @@
                 <!-- Andares serão gerados via JavaScript -->
             </div>
         </div>
-        <div class="elevator-shaft">
-            <div class="elevator" id="elevator"></div>
+        <div class="elevator-shaft" style="width: 120px;">
+            <div class="elevator" id="elevatorA"></div>
+        </div>
+        <div class="elevator-shaft" style="width: 120px;">
+            <div class="elevator" id="elevatorB"></div>
         </div>
         <div class="display-panel">
             <div class="status-row">
                 <div class="status-card">
-                    <h2>Andar Atual</h2>
+                    <h2>Elevador A</h2>
                     <div class="digital-display">
                         <span id="floor-display">0</span>
                     </div>
-                    <div class="direction" id="direction-display">■</div>
-                    <div id="elevator-status">Aguardando passageiros</div>
+                    <div class="direction" id="direction-display-A">■</div>
+                    <div id="elevator-status-A">Aguardando passageiros</div>
                 </div>
                 <div class="status-card">
-                    <h2>Cronômetro</h2>
+                    <h2>Elevador B</h2>
+                    <div class="digital-display">
+                        <span id="floor-display-B">0</span>
+                    </div>
+                    <div class="direction" id="direction-display-B">■</div>
+                    <div id="elevator-status-B">Aguardando passageiros</div>
+                </div>
+                <div class="status-card">
+                    <h2>Cronometro</h2>
                     <div class="digital-display">
                         <span id="timer-display">00:00</span>
                     </div>
-                    <div id="timer-status">Tempo desde saída do 0</div>
+                    <div id="timer-status"></div>
                 </div>
             </div>
             <div class="status-card">
@@ -49,6 +60,6 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/script2.js')}}"></script>
 </body>
 </html>

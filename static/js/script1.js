@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const elevatorStatusEl = document.getElementById('elevator-status');
     const eventLogEl = document.getElementById('event-log');
     const peopleListEl = document.getElementById('people-list');
-    // Configuração
+    
     const totalFloors = 10;
-    const API_BASE = 'http://localhost:8080/api';
+    const API_BASE = 'http://localhost:8080/api1';
     let people = [];
     let elevator = {
         currentFloor: 0,
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Atualizar lista de pessoas
         updatePeopleList();
         // Atualizar log
-        updateLog(data.log);
+    updateLog(Array.isArray(data.log) ? data.log : []);
     }
     // Atualizar visualização do prédio
     function updateBuilding() {
@@ -200,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Event Listeners
     document.getElementById('start-auto-btn').addEventListener('click', startAuto);
-    document.getElementById('reset-btn').addEventListener('click', resetSystem);
     // Adiciona pessoas automaticamente ao iniciar a simulação
 
     // Após reset, sempre adiciona passageiros e inicia simulação automaticamente

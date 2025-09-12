@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulador — 4 Elevadores</title>
+  <!-- usa o mesmo CSS que você já tem -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style4.css') }}">
+</head>
+<body>
+  <div class="container">
+    <!-- PRÉDIO / ANDARES -->
+    <div class="building-container">
+      <div class="building" id="building"><!-- Andares gerados via JS --></div>
+    </div>
+
+    <!-- 4 POÇOS DE ELEVADOR -->
+    <div class="elevator-shaft" style="width: 120px;">
+      <div class="elevator" id="elevatorA"></div>
+    </div>
+    <div class="elevator-shaft" style="width: 120px;">
+      <div class="elevator" id="elevatorB"></div>
+    </div>
+    <div class="elevator-shaft" style="width: 120px;">
+      <div class="elevator" id="elevatorC"></div>
+    </div>
+    <div class="elevator-shaft" style="width: 120px;">
+      <div class="elevator" id="elevatorD"></div>
+    </div>
+
+    <!-- PAINÉIS / STATUS -->
+    <div class="display-panel">
+      <div class="status-row" style="display: flex; flex-direction: row; gap: 30px;">
+  <div class="status-card">
+          <h2>Elevador A</h2>
+          <div class="digital-display"><span id="floor-display">0</span></div>
+          <div class="direction" id="direction-display-A">■</div>
+          <div id="elevator-status-A">Aguardando passageiros</div>
+        </div>
+        <div class="status-card">
+          <h2>Elevador B</h2>
+          <div class="digital-display"><span id="floor-display-B">0</span></div>
+          <div class="direction" id="direction-display-B">■</div>
+          <div id="elevator-status-B">Aguardando passageiros</div>
+        </div>
+        <div class="status-card">
+          <h2>Cronometro</h2>
+          <div class="digital-display"><span id="timer-display">00:00</span></div>
+          <div id="timer-status"></div>
+        </div>
+      </div>
+      <div class="status-row" style="display: flex; flex-direction: row; gap: 30px; margin-top: 20px;">
+  <div class="status-card">
+          <h2>Elevador C</h2>
+          <div class="digital-display"><span id="floor-display-C">0</span></div>
+          <div class="direction" id="direction-display-C">■</div>
+          <div id="elevator-status-C">Aguardando passageiros</div>
+        </div>
+        <div class="status-card">
+          <h2>Elevador D</h2>
+          <div class="digital-display"><span id="floor-display-D">0</span></div>
+          <div class="direction" id="direction-display-D">■</div>
+          <div id="elevator-status-D">Aguardando passageiros</div>
+        </div>
+          <div class="invisible-card"></div>
+      </div>
+
+  <div class="status-card">
+        <h2>Painel de Controle</h2>
+        <div class="controls">
+          <button class="control-btn" id="start-auto-btn">Iniciar Simulação</button>
+          <button class="control-btn" id="reset-btn">Resetar Simulação</button>
+        </div>
+      </div>
+
+      <div class="status-card">
+        <h2>Log de Eventos</h2>
+        <div class="log" id="event-log">
+          <div class="log-entry">Sistema inicializado. Aguardando início…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS específico para /api4/* -->
+  <script src="{{ url_for('static', filename='js/script4.js')}}"></script>
+</body>
+</html>

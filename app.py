@@ -1,55 +1,94 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
-import threading
-import webbrowser
-from app.elevator import elevator
+from app.simulation import Simulation
 
 app = Flask(__name__, template_folder='templates')
 CORS(app)
 
+Simulation = Simulation()
+
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('home.html')
 
-@app.route('/api/state', methods=['GET'])
-def get_state():
-    resp_data = elevator.get_state()
-    resp_data["people"] = elevator.passengers
+@app.route('/simulacao1')
+def simulacao1():
+    return render_template('index1.html')
 
-    target = None
-    for passenger in elevator.passengers:
-        if passenger.get("in_elevator"):
-            target = passenger.get("destiny_floor")
-            break
-        
-    if target is not None:
-        resp_data["target_floor"] = target
-    elif not any(p.get("in_elevator") for p in elevator.passengers):
-        resp_data["target_floor"] = 0
-    elif elevator.passengers:
-        resp_data["target_floor"] = elevator.passengers[0]["destiny_floor"]
-    resp = jsonify(resp_data)
-    
-    return resp
+@app.route('/simulacao2')
+def simulacao2():
+    return render_template('index2.html')
 
-@app.route('/api/reset', methods=['POST'])
-def reset():
-    elevator.current_floor = 0
-    elevator.target_floor = 0
-    elevator.moving = False
-    elevator.direction = "stopped"
-    elevator.passengers = elevator.load_passengers()
-    elevator.log = []
+@app.route('/simulacao4')
+def simulacao4():
+    return render_template('index4.html')
 
+@app.route('/api1/state', methods=['GET'])
+def get_state_1():
+    sim = Simulation.ensure_simulation(1)
+    elev = sim["elevators"][0]
+    state = elev.get_state()
+    state["people"] = sim["passengers"]
+    state["log"] = sim["log"]
+    return jsonify(state)
+
+
+@app.route('/api1/reset', methods=['POST'])
+def reset_1():
+    sim = Simulation.reset_simulation(1)
+    elev = sim["elevators"][0]
+    state = elev.get_state()
+    state["people"] = sim["passengers"]
+    state["log"] = sim["log"]
+    return jsonify(state)
+
+
+@app.route('/api1/start', methods=['POST'])
+def start_1():
+    Simulation.start_simulation(1)
+    return jsonify({"message": "Simulation Started"})
+
+@app.route('/api2/state', methods=['GET'])
+def get_state_2():
+    sim = Simulation.ensure_simulation(2)
+    resp_data = {
+        "elevators": [e.get_state() for e in sim["elevators"]],
+        "passengers": sim["passengers"],
+        "log": sim["log"],
+    }
+    return jsonify(resp_data)
+
+
+@app.route('/api2/reset', methods=['POST'])
+def reset_2():
+    Simulation.reset_simulation(2)
     return jsonify({"message": "Simulation Reset"})
 
-@app.route('/api/start', methods=['POST'])
-def start():
-    elevator.log.append("Simulação iniciada")
-    threading.Thread(target=elevator.elevator_thread, daemon=True).start()
-    
+
+@app.route('/api2/start', methods=['POST'])
+def start_2():
+    Simulation.start_simulation(2)
+    return jsonify({"message": "Simulation Started"})
+
+@app.route('/api4/state', methods=['GET'])
+def get_state_4():
+    sim = Simulation.ensure_simulation(4)
+    resp_data = {
+        "elevators": [e.get_state() for e in sim["elevators"]],
+        "passengers": sim["passengers"],
+        "log": sim["log"],
+    }
+    return jsonify(resp_data)
+
+@app.route('/api4/reset', methods=['POST'])
+def reset_4():
+    Simulation.reset_simulation(4)
+    return jsonify({"message": "Simulation Reset"})
+
+@app.route('/api4/start', methods=['POST'])
+def start_4():
+    Simulation.start_simulation(4)
     return jsonify({"message": "Simulation Started"})
 
 if __name__ == "__main__":
-    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:8080"))
     app.run(port=8080)
