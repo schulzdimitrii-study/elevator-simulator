@@ -1,7 +1,7 @@
 ## Elevator Simulator
 
 ![Python](https://img.shields.io/badge/Python-3.13-blue)
-![Flask](https://img.shields.io/badge/Spring%20Boot-3.1.2-brightgreen)
+![Flask](https://img.shields.io/badge/Flask-3.1.2-brightgreen)
 ![Werkeug](https://img.shields.io/badge/Werkeug-3.1.3-yellow)
 ![flask-cors](https://img.shields.io/badge/Flask%20Cors-4.1.1-purple)
 ![threading](https://img.shields.io/badge/Threading-2.0.5-orange)
