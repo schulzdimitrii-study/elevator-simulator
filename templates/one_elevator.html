@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% set style_filename = 'css/style1.css' %}
+
+{% block title %}Simulador - 1 Elevador{% endblock %}
+
+{% block elevator_shafts %}
+<div class="elevator-shaft">
+    <div class="elevator" id="elevator"></div>
+</div>
+{% endblock %}
+
+{% block status_rows %}
+<div class="status-row">
+    <div class="status-card">
+        <h2>Elevador</h2>
+        <div class="digital-display">
+            <span id="floor-display">0</span>
+        </div>
+        <div class="direction" id="direction-display">■</div>
+        <div id="elevator-status">Aguardando passageiros</div>
+    </div>
+    <div class="status-card">
+        <h2>Cronometro</h2>
+        <div class="digital-display">
+            <span id="timer-display">00:00</span>
+        </div>
+        <div id="timer-status"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block control_panel %}{{ super() }}{% endblock %}

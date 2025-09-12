@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% set style_filename = 'css/style4.css' %}
+
+{% block title %}Simulador - 4 Elevadores{% endblock %}
+
+{% block elevator_shafts %}
+<div class="elevator-shaft" style="width: 120px;">
+  <div class="elevator" id="elevatorA"></div>
+</div>
+<div class="elevator-shaft" style="width: 120px;">
+  <div class="elevator" id="elevatorB"></div>
+</div>
+<div class="elevator-shaft" style="width: 120px;">
+  <div class="elevator" id="elevatorC"></div>
+</div>
+<div class="elevator-shaft" style="width: 120px;">
+  <div class="elevator" id="elevatorD"></div>
+</div>
+{% endblock %}
+
+{% block status_rows %}
+<div class="status-row" style="display: flex; flex-direction: row; gap: 30px;">
+  <div class="status-card">
+    <h2>Elevador A</h2>
+    <div class="digital-display"><span id="floor-display">0</span></div>
+    <div class="direction" id="direction-display-A">■</div>
+    <div id="elevator-status-A">Aguardando passageiros</div>
+  </div>
+  <div class="status-card">
+    <h2>Elevador B</h2>
+    <div class="digital-display"><span id="floor-display-B">0</span></div>
+    <div class="direction" id="direction-display-B">■</div>
+    <div id="elevator-status-B">Aguardando passageiros</div>
+  </div>
+  <div class="status-card">
+    <h2>Cronometro</h2>
+    <div class="digital-display"><span id="timer-display">00:00</span></div>
+    <div id="timer-status"></div>
+  </div>
+</div>
+<div class="status-row" style="display: flex; flex-direction: row; gap: 30px; margin-top: 20px;">
+  <div class="status-card">
+    <h2>Elevador C</h2>
+    <div class="digital-display"><span id="floor-display-C">0</span></div>
+    <div class="direction" id="direction-display-C">■</div>
+    <div id="elevator-status-C">Aguardando passageiros</div>
+  </div>
+  <div class="status-card">
+    <h2>Elevador D</h2>
+    <div class="digital-display"><span id="floor-display-D">0</span></div>
+    <div class="direction" id="direction-display-D">■</div>
+    <div id="elevator-status-D">Aguardando passageiros</div>
+  </div>
+  <div class="invisible-card"></div>
+</div>
+{% endblock %}
+
+{% block control_panel %}{{ super() }}{% endblock %}
+
+{% block event_log %}
+<div class="status-card">
+  <h2>Log de Eventos</h2>
+  <div class="log" id="event-log">
+    <div class="log-entry">Sistema inicializado. Aguardando início…</div>
+  </div>
+</div>
+{% endblock %}
