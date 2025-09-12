@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
-from app.simulation import simulation
+from app.simulation import Simulation
 
 
 app = Flask(__name__, template_folder='templates')
 CORS(app)
 
-simulation = simulation()
+simulation = Simulation()
 
 @app.route('/')
 def home():
@@ -15,7 +15,7 @@ def home():
 # 1 Elevator Simulation Endpoints --------------------------------
 @app.route('/simulation_1')
 def simulation_1():
-    return render_template('index1.html')
+    return render_template('one_elevator.html')
 
 @app.route('/api/state_1', methods=['GET'])
 def get_state_1():
@@ -45,7 +45,7 @@ def start_1():
 # 2 Elevator Simulation Endpoints --------------------------------
 @app.route('/simulation_2')
 def simulation_2():
-    return render_template('index2.html')
+    return render_template('two_elevators.html')
 
 @app.route('/api/state_2', methods=['GET'])
 def get_state_2():
@@ -70,7 +70,7 @@ def start_2():
 # 4 Elevator Simulation Endpoints --------------------------------
 @app.route('/simulation_4')
 def simulation_4():
-    return render_template('index4.html')
+    return render_template('four_elevators.html')
 
 @app.route('/api/state_4', methods=['GET'])
 def get_state_4():
