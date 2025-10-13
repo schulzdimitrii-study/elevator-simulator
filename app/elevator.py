@@ -3,7 +3,7 @@ import time
 import threading
 
 class Elevator:
-    def __init__(self, name, passengers_pool, log_pool, duct_lock=None, sync_mode=True):
+    def __init__(self, name, passengers_pool, log_pool, motorLock=None, sync_mode=True):
         self.name = name
         self.current_floor = 0
         self.target_floor = 0
@@ -12,23 +12,23 @@ class Elevator:
         self.passengers_pool = passengers_pool  # pool compartilhado
         self.log_pool = log_pool  # log compartilhado
         self.current_passenger = None
-        self.duct_lock = duct_lock
+        self.motorLock = motorLock
         self.sync_mode = sync_mode
 
-    def useDuct(self, destinys):
+    def useMotor(self, destinys):
         """
-        Simula o uso do duto para ir até os andares em destinos.
+        Simula o uso do motor para ir até os andares em destinos.
         Se sync_mode=True, usa o lock (sincronismo). Se False, não usa lock (condição de corrida).
         """
-        if self.sync_mode and self.duct_lock:
-            with self.duct_lock:
-                self.log_pool.append(f"Elevador {self.name} entrou no duto (sincronizado) para {destinys}")
+        if self.sync_mode and self.motorLock:
+            with self.motorLock:
+                self.log_pool.append(f"Elevador {self.name} usando o motor (sincronizado) para {destinys}")
                 self.moveToDestiny(destinys)
-                self.log_pool.append(f"Elevador {self.name} saiu do duto (sincronizado)")
+                self.log_pool.append(f"Elevador {self.name} não usando o motor (sincronizado)")
         else:
-            self.log_pool.append(f"Elevador {self.name} entrou no duto (NÃO sincronizado) para {destinys}")
+            self.log_pool.append(f"Elevador {self.name} usando o motor (NÃO sincronizado) para {destinys}")
             self.moveToDestiny(destinys)
-            self.log_pool.append(f"Elevador {self.name} saiu do duto (NÃO sincronizado)")
+            self.log_pool.append(f"Elevador {self.name} não usando o motor (NÃO sincronizado)")
 
     def moveToDestiny(self, destinys):
         for destiny in destinys:
@@ -44,7 +44,7 @@ class Elevator:
             # retorna se não estiver no terreo
             if self.current_floor > 0:
                 self.target_floor = 0
-                self.useDuct([0])
+                self.useMotor([0])
 
             self.direction = "stopped"
             self.target_floor = self.current_floor
@@ -62,8 +62,8 @@ class Elevator:
                 target = passenger["destiny_floor"]
                 self.target_floor = target
 
-                # leva o passageiro ao destiny usando o duto
-                self.useDuct([target])
+                # leva o passageiro ao destiny usando o motor
+                self.useMotor([target])
                 time.sleep(1)
                 passenger["in_elevator"] = False
                 passenger["current_floor"] = target

@@ -35,14 +35,14 @@ class Simulation:
                 raise ValueError(f"Simulação {sim_id} não configurada")
             passengers = self.load_passengers()
             log = []
-            duct_lock = threading.Lock()  # O duto compartilhado
-            elevators = [Elevator(name, passengers, log, duct_lock, sync_mode) for name in names]
+            motorLock = threading.Lock()  # O motor compartilhado
+            elevators = [Elevator(name, passengers, log, motorLock, sync_mode) for name in names]
             self.simulations[sim_id] = {
                 "passengers": passengers,
                 "log": log,
                 "elevators": elevators,
                 "started": False,
-                "duct_lock": duct_lock,
+                "motorLock": motorLock,
                 "sync_mode": sync_mode,
             }
         return self.simulations[sim_id]
@@ -55,14 +55,14 @@ class Simulation:
             raise ValueError(f"Simulação {sim_id} não configurada")
         passengers = self.load_passengers()
         log = []
-        duct_lock = threading.Lock()
-        elevators = [Elevator(name, passengers, log, duct_lock, sync_mode) for name in names]
+        motorLock = threading.Lock()
+        elevators = [Elevator(name, passengers, log, motorLock, sync_mode) for name in names]
         self.simulations[sim_id] = {
             "passengers": passengers,
             "log": log,
             "elevators": elevators,
             "started": False,
-            "duct_lock": duct_lock,
+            "motorLock": motorLock,
             "sync_mode": sync_mode,
         }
         return self.simulations[sim_id]
@@ -75,5 +75,11 @@ class Simulation:
             for elev in sim["elevators"]:
                 threading.Thread(target=elev.elevator_thread, daemon=True).start()
             sim["started"] = True
+        else:
+            # Atualiza o modo de sincronismo dos elevadores existentes
+            for elev in sim["elevators"]:
+                elev.sync_mode = sync_mode
+            sim["sync_mode"] = sync_mode
+            sim["log"].append(f"Modo de sincronismo alterado para: {'ON' if sync_mode else 'OFF'}")
         return sim
     

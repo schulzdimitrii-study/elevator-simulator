@@ -205,9 +205,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Ações
+
+  function getSyncMode() {
+    const select = document.getElementById('sync-mode-select');
+    return select ? select.value : 'on';
+  }
+
   async function resetSimulation() {
     try {
-      const resp = await fetch(API.reset, { method: 'POST' });
+      const sync = getSyncMode();
+      const resp = await fetch(API.reset + `?sync=${sync}`, { method: 'POST' });
       if (!resp.ok) throw new Error('Falha ao resetar');
       timer = 0;
       timerRunning = false;
@@ -219,8 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function startSimulation() {
     try {
-      const resp = await fetch(API.start, { method: 'POST' });
-
+      const sync = getSyncMode();
+      const resp = await fetch(API.start + `?sync=${sync}`, { method: 'POST' });
       if (!resp.ok) throw new Error('Falha ao iniciar');
     } catch (e) { console.error(e); }
   }
