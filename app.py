@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from app.simulation import Simulation
-
 
 app = Flask(__name__, template_folder='templates')
 CORS(app)
@@ -29,7 +28,8 @@ def get_state_1():
 
 @app.route('/api/reset_1', methods=['POST'])
 def reset_1():
-    sim = simulation.reset_simulation(1)
+    sync = request.args.get('sync', 'on').lower() == 'on'
+    sim = simulation.reset_simulation(1, sync_mode=sync)
     elev = sim["elevators"][0]
     state = elev.get_state()
     state["people"] = sim["passengers"]
@@ -39,8 +39,9 @@ def reset_1():
 
 @app.route('/api/start_1', methods=['POST'])
 def start_1():
-    simulation.start_simulation(1)
-    return jsonify({"message": "Simulation Started"})
+    sync = request.args.get('sync', 'on').lower() == 'on'
+    simulation.start_simulation(1, sync_mode=sync)
+    return jsonify({"message": f"Simulation Started (sync={'on' if sync else 'off'})"})
 
 # 2 Elevator Simulation Endpoints --------------------------------
 @app.route('/simulation_2')
@@ -59,13 +60,15 @@ def get_state_2():
 
 @app.route('/api/reset_2', methods=['POST'])
 def reset_2():
-    simulation.reset_simulation(2)
-    return jsonify({"message": "Simulation Reset"})
+    sync = request.args.get('sync', 'on').lower() == 'on'
+    simulation.reset_simulation(2, sync_mode=sync)
+    return jsonify({"message": f"Simulation Reset (sync={'on' if sync else 'off'})"})
 
 @app.route('/api/start_2', methods=['POST'])
 def start_2():
-    simulation.start_simulation(2)
-    return jsonify({"message": "Simulation Started"})
+    sync = request.args.get('sync', 'on').lower() == 'on'
+    simulation.start_simulation(2, sync_mode=sync)
+    return jsonify({"message": f"Simulation Started (sync={'on' if sync else 'off'})"})
 
 # 4 Elevator Simulation Endpoints --------------------------------
 @app.route('/simulation_4')
@@ -84,13 +87,15 @@ def get_state_4():
 
 @app.route('/api/reset_4', methods=['POST'])
 def reset_4():
-    simulation.reset_simulation(4)
-    return jsonify({"message": "Simulation Reset"})
+    sync = request.args.get('sync', 'on').lower() == 'on'
+    simulation.reset_simulation(4, sync_mode=sync)
+    return jsonify({"message": f"Simulation Reset (sync={'on' if sync else 'off'})"})
 
 @app.route('/api/start_4', methods=['POST'])
 def start_4():
-    simulation.start_simulation(4)
-    return jsonify({"message": "Simulation Started"})
+    sync = request.args.get('sync', 'on').lower() == 'on'
+    simulation.start_simulation(4, sync_mode=sync)
+    return jsonify({"message": f"Simulation Started (sync={'on' if sync else 'off'})"})
 
 if __name__ == "__main__":
     app.run(port=8080)
