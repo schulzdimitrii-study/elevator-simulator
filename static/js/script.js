@@ -245,8 +245,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Init
   const startBtn = document.getElementById('start-auto-btn');
   const resetBtn = document.getElementById('reset-btn');
+
   if (startBtn) startBtn.addEventListener('click', startSimulation);
   if (resetBtn) resetBtn.addEventListener('click', resetSimulation);
+
+  // Reset automático ao trocar o modo
+  const syncSelect = document.getElementById('sync-mode-select');
+  if (syncSelect) {
+    syncSelect.addEventListener('change', () => {
+      resetSimulation();
+    });
+  }
 
   initializeBuilding();
   setInterval(fetchState, 200);
