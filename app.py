@@ -1,110 +1,16 @@
-from flask import Flask, jsonify, render_template, request
-from app.simulation import Simulation
-import ast
+from flask import Flask, jsonify, render_template
+from routes.elevators import elevators_bp
+from routes.simulations import simulations_bp
 
 app = Flask(__name__, template_folder='templates')
+app.register_blueprint(simulations_bp)
+app.register_blueprint(elevators_bp)
 
-simulation = Simulation()
 
 @app.route('/')
 def home():
     return render_template('home.html')
 
-# 1 Elevator Simulation Endpoints --------------------------------
-@app.route('/simulation_1')
-def simulation_1():
-    return render_template('one_elevator.html')
-
-@app.route('/api/state_1', methods=['GET'])
-def get_state_1():
-    sim = simulation.ensure_simulation(1)
-    elev = sim["elevators"][0]
-    state = elev.get_state()
-    state["people"] = sim["passengers"]
-    state["log"] = sim["log"]
-    return jsonify(state)
-
-
-@app.route('/api/reset_1', methods=['POST'])
-def reset_1():
-    sync = request.args.get('sync', 'on').lower() == 'on'
-    sort_passengers_by_priority = ast.literal_eval(request.args.get('sort_by_priority'))
-    sim = simulation.reset_simulation(1, sort_passengers_by_priority, sync)
-    elev = sim["elevators"][0]
-    state = elev.get_state()
-    state["people"] = sim["passengers"]
-    state["log"] = sim["log"]
-    return jsonify(state)
-
-
-@app.route('/api/start_1', methods=['POST'])
-def start_1():
-    sync = request.args.get('sync', 'on').lower() == 'on'
-    sort_passengers_by_priority = ast.literal_eval(request.args.get('sort_by_priority'))
-    simulation.start_simulation(1, sort_passengers_by_priority, sync)
-    
-    return jsonify({"message": f"Simulation Started (sync={'on' if sync else 'off'})"})
-
-# 2 Elevator Simulation Endpoints --------------------------------
-@app.route('/simulation_2')
-def simulation_2():
-    return render_template('two_elevators.html')
-
-@app.route('/api/state_2', methods=['GET'])
-def get_state_2():
-    sim = simulation.ensure_simulation(2)
-    resp_data = {
-        "elevators": [e.get_state() for e in sim["elevators"]],
-        "passengers": sim["passengers"],
-        "log": sim["log"],
-    }
-    return jsonify(resp_data)
-
-@app.route('/api/reset_2', methods=['POST'])
-def reset_2():
-    sync = request.args.get('sync', 'on').lower() == 'on'
-    sort_passengers_by_priority = ast.literal_eval(request.args.get('sort_by_priority'))
-    simulation.reset_simulation(2, sort_passengers_by_priority, sync)
-
-    return jsonify({"message": f"Simulation Reset (sync={'on' if sync else 'off'})"})
-
-@app.route('/api/start_2', methods=['POST'])
-def start_2():
-    sync = request.args.get('sync', 'on').lower() == 'on'
-    sort_passengers_by_priority = ast.literal_eval(request.args.get('sort_by_priority'))
-    simulation.start_simulation(2, sort_passengers_by_priority, sync)
-    
-    return jsonify({"message": f"Simulation Started (sync={'on' if sync else 'off'})"})
-
-# 4 Elevator Simulation Endpoints --------------------------------
-@app.route('/simulation_4')
-def simulation_4():
-    return render_template('four_elevators.html')
-
-@app.route('/api/state_4', methods=['GET'])
-def get_state_4():
-    sim = simulation.ensure_simulation(4)
-    resp_data = {
-        "elevators": [e.get_state() for e in sim["elevators"]],
-        "passengers": sim["passengers"],
-        "log": sim["log"],
-    }
-    return jsonify(resp_data)
-
-@app.route('/api/reset_4', methods=['POST'])
-def reset_4():
-    sync = request.args.get('sync', 'on').lower() == 'on'
-    sort_passengers_by_priority = ast.literal_eval(request.args.get('sort_by_priority'))
-    simulation.reset_simulation(4, sort_passengers_by_priority, sync)
-    
-    return jsonify({"message": f"Simulation Reset (sync={'on' if sync else 'off'})"})
-
-@app.route('/api/start_4', methods=['POST'])
-def start_4():
-    sync = request.args.get('sync', 'on').lower() == 'on'
-    sort_passengers_by_priority = ast.literal_eval(request.args.get('sort_by_priority'))
-    simulation.start_simulation(4, sort_passengers_by_priority, sync)
-    return jsonify({"message": f"Simulation Started (sync={'on' if sync else 'off'})"})
 
 if __name__ == "__main__":
-    app.run(port=8080)
+    app.run(host='0.0.0.0', port=8080)
