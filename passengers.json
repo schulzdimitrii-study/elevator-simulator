@@ -1,7 +1,43 @@
 [
-    {"name": "Jonas", "destiny_floor": 9},
-    {"name": "Felipe", "destiny_floor": 2},
-    {"name": "Dimitri", "destiny_floor": 5},
-    {"name": "Igor", "destiny_floor": 6},
-    {"name": "Luiz", "destiny_floor": 3}
+    {
+        "name": "Felipe", 
+        "destiny_floor": 2,
+        "priority": {
+            "level": 1,
+            "reason": "Idoso"   
+        }
+    },
+    {
+        "name": "Dimitri", 
+        "destiny_floor": 5,
+        "priority": {
+            "level": 2,
+            "reason": "Normal"   
+        }
+    },
+    {
+        "name": "Igor", 
+        "destiny_floor": 6,
+        "priority": {
+            "level": 3,
+            "reason": "Normal"   
+        }
+    },
+    {
+        "name": "Maria",   
+        "destiny_floor": 9,
+        "priority": {
+            "level": 0,
+            "reason": "Gestante"  
+        }
+    },
+    {
+        "name": "Luiz", 
+        "destiny_floor": 3,
+        "priority": {
+            "level": 3,
+            "reason": "Normal"
+        }
+    }
+
 ]

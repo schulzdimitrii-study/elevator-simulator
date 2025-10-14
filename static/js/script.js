@@ -211,10 +211,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return select ? select.value : 'on';
   }
 
+  function getSortMode() {
+    const select = document.getElementById('sort-mode-select');
+    return select.value; 
+  }
+
   async function resetSimulation() {
     try {
       const sync = getSyncMode();
-      const resp = await fetch(API.reset + `?sync=${sync}`, { method: 'POST' });
+      const sortByPriority = getSortMode();
+      const resp = await fetch(API.reset + `?sync=${sync}&sort_by_priority=${sortByPriority}`, { method: 'POST' });
       if (!resp.ok) throw new Error('Falha ao resetar');
       timer = 0;
       timerRunning = false;
@@ -227,7 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
   async function startSimulation() {
     try {
       const sync = getSyncMode();
-      const resp = await fetch(API.start + `?sync=${sync}`, { method: 'POST' });
+      const sortByPriority = getSortMode();
+      const resp = await fetch(API.start + `?sync=${sync}&sort_by_priority=${sortByPriority}`, { method: 'POST' });
       if (!resp.ok) throw new Error('Falha ao iniciar');
     } catch (e) { console.error(e); }
   }
@@ -253,6 +260,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const syncSelect = document.getElementById('sync-mode-select');
   if (syncSelect) {
     syncSelect.addEventListener('change', () => {
+      resetSimulation();
+    });
+  }
+
+  const sortSelect = document.getElementById('sort-mode-select');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', () => {
       resetSimulation();
     });
   }

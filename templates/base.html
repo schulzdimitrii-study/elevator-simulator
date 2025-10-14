@@ -4,7 +4,6 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>{% block title %}Simulador de Elevador{% endblock %}</title>
-	{# Estilo principal configurável por página #}
 	<link rel="stylesheet" href="{{ url_for('static', filename=style_filename|default('css/style1.css')) }}" />
 	{% block extra_css %}{% endblock %}
 </head>
@@ -13,15 +12,11 @@
 		<div class="building-container">
 			<div class="building" id="building"><!-- Andares gerados via JavaScript --></div>
 		</div>
-
-		{# Poços / elevadores variam (1, 2 ou 4) #}
 		{% block elevator_shafts %}{% endblock %}
 
 		<div class="display-panel">
-			{# Linhas/status de elevadores e cronômetro #}
 			{% block status_rows %}{% endblock %}
 
-			{# Painel de controle comum (pode ser sobrescrito) #}
 			{% block control_panel %}
 			<div class="status-card">
 				<h2>Painel de Controle</h2>
@@ -31,13 +26,19 @@
 						<option value="on">Sincronizado</option>
 						<option value="off">Não Sincronizado</option>
 					</select>
+
+					<label for="sort-mode-select" style="margin-left:10px; margin-right:10px; font-weight:bold;">Ordenação:</label>
+					<select id="sort-mode-select" class="control-btn" style="width:auto;">
+						<option value="True" {% if sort_by_priority %}selected{% endif %}>Prioridade</option>
+						<option value="False" {% if not sort_by_priority %}selected{% endif %}>Destino</option>
+					</select>
+
 					<button class="control-btn" id="start-auto-btn">Iniciar Simulação</button>
 					<button class="control-btn" id="reset-btn">Resetar Simulação</button>
 				</div>
 			</div>
 			{% endblock %}
 
-			{# Log de eventos opcional #}
 			{% block event_log %}{% endblock %}
 		</div>
 	</div>

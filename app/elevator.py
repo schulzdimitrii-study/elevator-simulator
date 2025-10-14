@@ -1,6 +1,4 @@
-
 import time
-import threading
 
 class Elevator:
     def __init__(self, name, passengers_pool, log_pool, motorLock=None, sync_mode=True):
