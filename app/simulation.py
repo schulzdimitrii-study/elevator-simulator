@@ -2,7 +2,6 @@ from typing import List, Dict
 import json
 import threading
 from app.elevator import Elevator
-from app import simulation
 
 class Simulation:
     def __init__(self):
@@ -78,7 +77,7 @@ class Simulation:
         return self.simulations[sim_id]
 
 
-    def start_simulation(self, sim_id: int, sort_by_priority: bool, sync_mode: bool = True):
+    def start_simulation(self, sim_id: int, sort_by_priority: bool, sync_mode: bool = True) -> Dict:
         simulation = self.ensure_simulation(sim_id, sort_by_priority, sync_mode)
         if not simulation["started"]:
             simulation["log"].append(f"Simulação iniciada (sincronismo: {'ON' if sync_mode else 'OFF'})")
@@ -92,11 +91,4 @@ class Simulation:
             simulation["sync_mode"] = sync_mode
             simulation["log"].append(f"Modo de sincronismo alterado para: {'ON' if sync_mode else 'OFF'}")
         return simulation
-    
-    def get_simulation(self, sim_id: int) -> Dict:
-        simulation = self.simulations.get(sim_id)
-        if not simulation:
-            raise ValueError(f"Simulação {sim_id} não encontrada")
-        
-        return self.simulations.get(sim_id)
         
