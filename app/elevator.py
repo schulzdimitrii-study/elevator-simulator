@@ -14,21 +14,8 @@ class Elevator:
         self.sync_mode = sync_mode
 
     def useMotor(self, destinys):
-        """
-        Simula o uso do motor para ir até os andares em destinos.
-        Se sync_mode=True, usa o lock (sincronismo). Se False, não usa lock (condição de corrida).
-        """
-        if self.sync_mode and self.motorLock:
-            with self.motorLock:
-                self.log_pool.append(f"Elevador {self.name} usando o motor (sincronizado) para {destinys}")
-                self.moveToDestiny(destinys)
-                self.log_pool.append(f"Elevador {self.name} não usando o motor (sincronizado)")
-        else:
-            self.log_pool.append(f"Elevador {self.name} usando o motor (NÃO sincronizado) para {destinys}")
-            self.moveToDestiny(destinys)
-            self.log_pool.append(f"Elevador {self.name} não usando o motor (NÃO sincronizado)")
-
-    def moveToDestiny(self, destinys):
+        """Recurso compartilhado entre os elevadores"""
+        
         for destiny in destinys:
             while self.current_floor != destiny:
                 if self.current_floor < destiny:
@@ -39,15 +26,13 @@ class Elevator:
 
     def elevator_thread(self):
         while True:
-            # retorna se não estiver no terreo
+
             if self.current_floor > 0:
-                self.target_floor = 0
                 self.useMotor([0])
 
             self.direction = "stopped"
             self.target_floor = self.current_floor
 
-            # Procurar passageiro esperando no térreo
             passenger = None
             for p in self.passengers_pool:
                 if not p["in_elevator"] and not p["is_arrived"] and p["current_floor"] == 0:
@@ -55,30 +40,53 @@ class Elevator:
                     break
 
             if passenger:
-                passenger["in_elevator"] = True
-                passenger["current_floor"] = self.current_floor
-                target = passenger["destiny_floor"]
-                self.target_floor = target
+                self._transport_passenger(passenger)
+            else:
+                if all(p["is_arrived"] for p in self.passengers_pool):
+                    self.direction = "stopped"
+                    self.log_pool.append(f"Elevador {self.name} finalizou.")
+                    time.sleep(1)
+                    raise SystemExit
+                time.sleep(1)
 
-                # leva o passageiro ao destiny usando o motor
+    def _transport_passenger(self, passenger):
+        """Ciclo completo:
+        Leva o passageiro ao andar destino e retorna"""
+        
+        passenger["in_elevator"] = True
+        passenger["current_floor"] = self.current_floor
+        target = passenger["destiny_floor"]
+        self.target_floor = target
+
+        self.log_pool.append(f"Elevador {self.name} pegou {passenger['name']} no térreo e vai para {target}")
+
+        if self.sync_mode and self.motorLock:  # Modo sincronismo
+            self.log_pool.append(f"Elevador {self.name} aguardando motor")
+            with self.motorLock:
+                self.log_pool.append(f"Elevador {self.name} usando o motor")
+
                 self.useMotor([target])
                 time.sleep(1)
+
                 passenger["in_elevator"] = False
                 passenger["current_floor"] = target
                 passenger["is_arrived"] = True
                 self.current_floor = target
                 self.target_floor = self.current_floor
                 self.log_pool.append(f"Elevador {self.name} deixou {passenger['name']} no andar {target}")
+
+                self.useMotor([0])
+                self.current_floor = 0
+                self.target_floor = 0
                 self.direction = "stopped"
+                self.log_pool.append(f"Elevador {self.name} retornou ao térreo e liberou o motor")
                 time.sleep(2)
-            else:
-                # Nenhum passageiro esperando no térreo
-                self.target_floor = self.current_floor
-                if all(p["is_arrived"] for p in self.passengers_pool):
-                    self.direction = "stopped"
-                    self.log_pool.append(f"Elevador {self.name} finalizou.")
-                    break
-                time.sleep(1)
+        else:   # Moem sincronismo
+            self.useMotor([target])
+            passenger["in_elevator"] = False
+            passenger["current_floor"] = target
+            passenger["is_arrived"] = True
+            self.useMotor([0])
 
     def get_state(self):
         return {

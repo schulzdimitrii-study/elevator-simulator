@@ -12,12 +12,12 @@ class Simulation:
             4: ["A", "B", "C", "D"],
         }
     
-        # Estrutura: simulations[sim_id] = {
-        #   'passengers': [...],
-        #   'log': [...],
-        #   'elevators': [Elevator,...],
-        #   'started': bool
-        # }
+        ''' Estrutura: simulations[sim_id] = {
+           'passengers': [...],
+           'log': [...],
+           'elevators': [Elevator,...],
+           'started': bool
+        } '''
     
     def load_passengers(self, sort_by_priority: bool) -> List:
         with open("passengers.json", "r", encoding="utf-8") as f:
@@ -58,7 +58,9 @@ class Simulation:
 
 
     def reset_simulation(self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True) -> Dict:
-        """Reseta completamente a simulação (nova fila compartilhada & elevadores)."""
+        """Reseta completamente a simulação
+        (nova fila compartilhada & elevadores)"""
+        
         names = self.ELEVATOR_NAME_MAP.get(sim_id)
         if not names:
             raise ValueError(f"Simulação {sim_id} não configurada")
