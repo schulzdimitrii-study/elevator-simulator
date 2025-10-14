@@ -149,8 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
       div.textContent = txt;
       eventLog.appendChild(div);
     });
-
-    eventLog.scrollTop = eventLog.scrollHeight;
   }
 
   function updateView(data) {
