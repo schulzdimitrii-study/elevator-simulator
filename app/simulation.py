@@ -58,7 +58,7 @@ class Simulation:
         }
 
 
-    def reset_simulation(self, sim_id: int, sort_by_priority: str = 'True', sync_mode: bool = True) -> Dict:
+    def reset_simulation(self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True) -> Dict:
         """Reseta completamente a simulação (nova fila compartilhada & elevadores)."""
         names = self.ELEVATOR_NAME_MAP.get(sim_id)
         if not names:
@@ -78,7 +78,7 @@ class Simulation:
         return self.simulations[sim_id]
 
 
-    def start_simulation(self, sim_id: int, sort_by_priority: str, sync_mode: bool = True):
+    def start_simulation(self, sim_id: int, sort_by_priority: bool, sync_mode: bool = True):
         simulation = self.ensure_simulation(sim_id, sort_by_priority, sync_mode)
         if not simulation["started"]:
             simulation["log"].append(f"Simulação iniciada (sincronismo: {'ON' if sync_mode else 'OFF'})")
