@@ -34,6 +34,9 @@ app.py                # Flask + rotas HTML/API
 app/
   elevator.py         # Classe Elevator
   simulation.py       # Classe Simulation (criação e controle dos cenários)
+routes/
+  elevators.py
+  simulations.py
 passengers.json       # Lista de passageiros (campos: name, destiny_floor, ...)
 templates/            # Páginas HTML (home e cenários)
 static/               # CSS / JS para visualização
@@ -41,13 +44,13 @@ static/               # CSS / JS para visualização
 
 ### Endpoints Principais (API JSON)
 Cada conjunto (1, 2 ou 4 elevadores) possui trio de rotas:
-* `GET /api{N}/state` – Estado atual (elevadores, passageiros, log).
-* `POST /api{N}/start` – Inicia threads dos elevadores (idempotente).
-* `POST /api{N}/reset` – Reinicia completamente o cenário.
+* `GET /api/state_{N}` – Estado atual (elevadores, passageiros, log).
+* `POST /api/start_{N}` – Inicia threads dos elevadores (idempotente).
+* `POST /api/reset_{N}` – Reinicia completamente o cenário.
 
-Exemplos: `/api1/state`, `/api2/start`, `/api4/reset`.
+Exemplos: `/api/state_1`, `/api/start_2`, `/api/reset_4`.
 
-Rotas HTML: `/` (home), `/simulacao1`, `/simulacao2`, `/simulacao4`.
+Rotas HTML: `/` (home), `/simulation_1`, `/simulation_2`, `/simulation_4`.
 
 ### Setup Rápido
 ```bash
@@ -64,22 +67,20 @@ python app.py  # inicia em http://localhost:8080
 
 ### Teste Rápido da API
 ```bash
-curl http://localhost:8080/api1/state
-curl -X POST http://localhost:8080/api1/start
+curl http://localhost:8080/api/state_1
+curl -X POST http://localhost:8080/api/start_1
 ```
 
 ### Personalizar Passageiros
-Edite `passengers.json` (ex.: destino, nomes). Ao alterar, use `POST /apiN/reset` para recarregar.
+Edite `passengers.json` (ex.: destino, nomes). Ao alterar, use `POST /api/reset_N` para recarregar.
 
 ### Limitações / Notas
-* Não há locks: a simplicidade do loop e escrituras sequenciais minimizam condições de corrida, mas não é thread-safe para uso crítico.
 * Sem persistência; toda simulação vive em memória enquanto o processo roda.
 * Uso educacional / protótipo.
 
 ### Próximos Passos Possíveis (idéias)
-* Adicionar prioridade ou multiple boarding por viagem.
 * Métricas de desempenho (tempo médio de espera / viagem).
-* Locks ou filas thread-safe para robustez.
+* filas thread-safe para robustez.
 
 ---
 MIT License – Uso livre para estudo.
