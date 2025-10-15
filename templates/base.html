@@ -30,7 +30,7 @@
 					<label for="sort-mode-select" style="margin-left:10px; margin-right:10px; font-weight:bold;">Ordenação:</label>
 					<select id="sort-mode-select" class="control-btn" style="width:auto;">
 						<option value="True" {% if sort_by_priority %}selected{% endif %}>Prioridade</option>
-						<option value="False" {% if not sort_by_priority %}selected{% endif %}>Destino</option>
+						<option value="False" {% if not sort_by_priority %}{% endif %}>Destino</option>
 					</select>
 
 					<button class="control-btn" id="start-auto-btn">Iniciar Simulação</button>
