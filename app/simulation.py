@@ -1,7 +1,10 @@
-from typing import List, Dict
 import json
 import threading
+import time
+from typing import Dict, List
+
 from app.elevator import Elevator
+
 
 class Simulation:
     def __init__(self):
@@ -11,42 +14,53 @@ class Simulation:
             2: ["A", "B"],
             4: ["A", "B", "C", "D"],
         }
-    
-        ''' Estrutura: simulations[sim_id] = {
+
+        """ Estrutura: simulations[sim_id] = {
            'passengers': [...],
            'log': [...],
            'elevators': [Elevator,...],
            'started': bool
-        } '''
-    
+        } """
+
     def load_passengers(self, sort_by_priority: bool) -> List:
         with open("passengers.json", "r", encoding="utf-8") as f:
             passengers = json.load(f)
 
         if sort_by_priority:
-            passengers.sort(key=lambda p: p['priority']['level'])
+            passengers.sort(key=lambda p: p["priority"]["level"])
         else:
-            passengers.sort(key=lambda p: p['destiny_floor'])
-        
+            passengers.sort(key=lambda p: p["destiny_floor"])
+
         for p in passengers:
             p["in_elevator"] = False
             p["current_floor"] = 0
             p["is_arrived"] = False
+            p["start_time"] = time.time()  # início da simulação
+            p["end_time"] = None
+            p["wait_time"] = None
         return passengers
-    
-    def ensure_simulation(self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True) -> Dict:
-        return self.simulations.setdefault(sim_id, self._create_simulation(sim_id, sort_by_priority, sync_mode))
 
-    def _create_simulation(self, sim_id: int, sort_by_priority: bool, sync_mode: bool) -> Dict:
+    def ensure_simulation(
+        self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True
+    ) -> Dict:
+        return self.simulations.setdefault(
+            sim_id, self._create_simulation(sim_id, sort_by_priority, sync_mode)
+        )
+
+    def _create_simulation(
+        self, sim_id: int, sort_by_priority: bool, sync_mode: bool
+    ) -> Dict:
         names = self.ELEVATOR_NAME_MAP.get(sim_id)
         if not names:
             raise ValueError(f"Simulação {sim_id} não configurada")
-        
+
         passengers = self.load_passengers(sort_by_priority)
         log = []
         motorLock = threading.Lock()
-        elevators = [Elevator(name, passengers, log, motorLock, sync_mode) for name in names]
-        
+        elevators = [
+            Elevator(name, passengers, log, motorLock, sync_mode) for name in names
+        ]
+
         return {
             "passengers": passengers,
             "log": log,
@@ -56,18 +70,21 @@ class Simulation:
             "sync_mode": sync_mode,
         }
 
-
-    def reset_simulation(self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True) -> Dict:
+    def reset_simulation(
+        self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True
+    ) -> Dict:
         """Reseta completamente a simulação
         (nova fila compartilhada & elevadores)"""
-        
+
         names = self.ELEVATOR_NAME_MAP.get(sim_id)
         if not names:
             raise ValueError(f"Simulação {sim_id} não configurada")
         passengers = self.load_passengers(sort_by_priority)
         log = []
         motorLock = threading.Lock()
-        elevators = [Elevator(name, passengers, log, motorLock, sync_mode) for name in names]
+        elevators = [
+            Elevator(name, passengers, log, motorLock, sync_mode) for name in names
+        ]
         self.simulations[sim_id] = {
             "passengers": passengers,
             "log": log,
@@ -78,11 +95,14 @@ class Simulation:
         }
         return self.simulations[sim_id]
 
-
-    def start_simulation(self, sim_id: int, sort_by_priority: bool, sync_mode: bool = True) -> Dict:
+    def start_simulation(
+        self, sim_id: int, sort_by_priority: bool, sync_mode: bool = True
+    ) -> Dict:
         simulation = self.ensure_simulation(sim_id, sort_by_priority, sync_mode)
         if not simulation["started"]:
-            simulation["log"].append(f"Simulação iniciada (sincronismo: {'ON' if sync_mode else 'OFF'})")
+            simulation["log"].append(
+                f"Simulação iniciada (sincronismo: {'ON' if sync_mode else 'OFF'})"
+            )
             for elev in simulation["elevators"]:
                 threading.Thread(target=elev.elevator_thread, daemon=True).start()
             simulation["started"] = True
@@ -91,6 +111,7 @@ class Simulation:
             for elev in simulation["elevators"]:
                 elev.sync_mode = sync_mode
             simulation["sync_mode"] = sync_mode
-            simulation["log"].append(f"Modo de sincronismo alterado para: {'ON' if sync_mode else 'OFF'}")
+            simulation["log"].append(
+                f"Modo de sincronismo alterado para: {'ON' if sync_mode else 'OFF'}"
+            )
         return simulation
-        
