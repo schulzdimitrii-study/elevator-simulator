@@ -50,6 +50,12 @@ class Elevator:
             else:
                 if all(p["is_arrived"] for p in self.passengers_pool):
                     self.direction = "stopped"
+                    # --- cálculo da média de tempo de espera ---
+                    times = [p["wait_time"] for p in self.passengers_pool if p.get("wait_time") is not None]
+                    if times:
+                        avg = sum(times) / len(times)
+                        self.log_pool.append(f"Média de tempo de espera: {avg:.1f}s")
+                    # ------------------------------------------------
                     self.log_pool.append(f"Elevador {self.name} finalizou.")
                     time.sleep(1)
                     raise SystemExit
@@ -79,6 +85,10 @@ class Elevator:
                 passenger["in_elevator"] = False
                 passenger["current_floor"] = target
                 passenger["is_arrived"] = True
+                passenger["end_time"] = time.time()
+                passenger["wait_time"] = passenger["end_time"] - (passenger.get("start_time") or passenger["end_time"])
+                self.log_pool.append(f"{passenger['name']} esperou {passenger['wait_time']:.1f}s até o andar {target}")
+
                 self.current_floor = target
                 self.target_floor = self.current_floor
                 self.log_pool.append(
@@ -98,6 +108,9 @@ class Elevator:
             passenger["in_elevator"] = False
             passenger["current_floor"] = target
             passenger["is_arrived"] = True
+            passenger["end_time"] = time.time()
+            passenger["wait_time"] = passenger["end_time"] - (passenger.get("start_time") or passenger["end_time"])
+            self.log_pool.append(f"{passenger['name']} esperou {passenger['wait_time']:.1f}s até o andar {target}")
             self.useMotor([0])
 
     def get_state(self) -> Dict:
