@@ -1,6 +1,7 @@
 from typing import List, Dict
 import json
 import threading
+import time
 from app.elevator import Elevator
 
 class Simulation:
@@ -32,6 +33,9 @@ class Simulation:
             p["in_elevator"] = False
             p["current_floor"] = 0
             p["is_arrived"] = False
+            p["start_time"] = time.time()   # início da simulação
+            p["end_time"] = None
+            p["wait_time"] = None
         return passengers
     
     def ensure_simulation(self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True) -> Dict:
@@ -93,4 +97,3 @@ class Simulation:
             simulation["sync_mode"] = sync_mode
             simulation["log"].append(f"Modo de sincronismo alterado para: {'ON' if sync_mode else 'OFF'}")
         return simulation
-        
