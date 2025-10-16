@@ -1,6 +1,6 @@
-from typing import List, Dict
 import json
 import threading
+import time
 from app.elevator import Elevator
 
 class Simulation:
@@ -19,7 +19,7 @@ class Simulation:
            'started': bool
         } '''
     
-    def load_passengers(self, sort_by_priority: bool) -> List:
+    def load_passengers(self, sort_by_priority):
         with open("passengers.json", "r", encoding="utf-8") as f:
             passengers = json.load(f)
 
@@ -32,12 +32,15 @@ class Simulation:
             p["in_elevator"] = False
             p["current_floor"] = 0
             p["is_arrived"] = False
+            p["start_time"] = time.time()   # início da simulação
+            p["end_time"] = None
+            p["wait_time"] = None
         return passengers
     
-    def ensure_simulation(self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True) -> Dict:
+    def ensure_simulation(self, sim_id, sort_by_priority=True, sync_mode=True):
         return self.simulations.setdefault(sim_id, self._create_simulation(sim_id, sort_by_priority, sync_mode))
 
-    def _create_simulation(self, sim_id: int, sort_by_priority: bool, sync_mode: bool) -> Dict:
+    def _create_simulation(self, sim_id, sort_by_priority, sync_mode):
         names = self.ELEVATOR_NAME_MAP.get(sim_id)
         if not names:
             raise ValueError(f"Simulação {sim_id} não configurada")
@@ -56,8 +59,7 @@ class Simulation:
             "sync_mode": sync_mode,
         }
 
-
-    def reset_simulation(self, sim_id: int, sort_by_priority: bool = True, sync_mode: bool = True) -> Dict:
+    def reset_simulation(self, sim_id, sort_by_priority=True, sync_mode=True):
         """Reseta completamente a simulação
         (nova fila compartilhada & elevadores)"""
         
@@ -78,8 +80,7 @@ class Simulation:
         }
         return self.simulations[sim_id]
 
-
-    def start_simulation(self, sim_id: int, sort_by_priority: bool, sync_mode: bool = True) -> Dict:
+    def start_simulation(self, sim_id, sort_by_priority, sync_mode=True):
         simulation = self.ensure_simulation(sim_id, sort_by_priority, sync_mode)
         if not simulation["started"]:
             simulation["log"].append(f"Simulação iniciada (sincronismo: {'ON' if sync_mode else 'OFF'})")
@@ -93,4 +94,3 @@ class Simulation:
             simulation["sync_mode"] = sync_mode
             simulation["log"].append(f"Modo de sincronismo alterado para: {'ON' if sync_mode else 'OFF'}")
         return simulation
-        
